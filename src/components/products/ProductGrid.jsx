@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import Loading from "../common/Loading";
 import SearchBar from "../common/SearchBar";
 import CategoryFilter from "./CategoryFilter";
-import PriceFilter from "./PriceFilter"; // ✅ import price filter
+import PriceFilter from "./PriceFilter";
 import api from "../../services/api";
 
 export default function ProductGrid({ products: propProducts = null, featured = false }) {
@@ -11,8 +11,8 @@ export default function ProductGrid({ products: propProducts = null, featured = 
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 10000]); // ✅ price range
-  const [loading, setLoading] = useState(!propProducts); // only load if no prop
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [loading, setLoading] = useState(!propProducts);
 
   useEffect(() => {
     if (propProducts) {
@@ -40,7 +40,7 @@ export default function ProductGrid({ products: propProducts = null, featured = 
     }
   }, [propProducts, featured]);
 
-  // Filter products by search, category, and price
+  // 🔑 Fix filtering according to backend DTO fields
   useEffect(() => {
     let result = [...products];
 
@@ -51,14 +51,14 @@ export default function ProductGrid({ products: propProducts = null, featured = 
     }
 
     if (category) {
-      result = result.filter(p =>
-        p.category.toLowerCase().includes(category.toLowerCase())
+      result = result.filter(
+        p => p.categoryName && p.categoryName.toLowerCase().includes(category.toLowerCase())
       );
     }
 
     if (priceRange) {
       result = result.filter(
-        p => p.price >= priceRange[0] && p.price <= priceRange[1]
+        p => p.pricePer100g >= priceRange[0] && p.pricePer100g <= priceRange[1]
       );
     }
 
@@ -72,7 +72,7 @@ export default function ProductGrid({ products: propProducts = null, featured = 
       <div className="flex flex-wrap gap-4 mb-6">
         <SearchBar placeholder="Search products..." onSearch={setSearch} />
         <CategoryFilter onSelect={setCategory} />
-        <PriceFilter onChange={setPriceRange} /> {/* ✅ add price filter */}
+        <PriceFilter onChange={setPriceRange} />
       </div>
 
       {filtered.length === 0 ? (
