@@ -1,30 +1,35 @@
 package com.example.backend.controller;
 
-import com.example. backend.dto.ApiResponse;
-import com.example.backend.dto.PaymentCreateDTO;
+import com.example.backend.dto.PaymentConfirmDTO;
 import com.example.backend.dto.PaymentResponseDTO;
 import com.example.backend.service.PaymentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/payments") @RequiredArgsConstructor
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/payment")
+@RequiredArgsConstructor
 public class PaymentController {
-  private final PaymentService paymentService;
 
-  @PostMapping("/create-order")
-  public PaymentResponseDTO createOrder(@RequestBody @Valid PaymentCreateDTO dto) throws Exception {
-    return paymentService.createRazorpayOrder(dto.orderId());
-  }
+    private final PaymentService paymentService;
 
-  @PostMapping("/success")
-  public ApiResponse success(
-      @RequestParam Long orderId,
-      @RequestParam String razorpay_order_id,
-      @RequestParam String razorpay_payment_id,
-      @RequestParam String razorpay_signature
-  ) throws Exception {
-    paymentService.confirmSuccess(orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature);
-    return new ApiResponse(true, "Payment recorded & split applied");
-  }
+    // 1️⃣ Create dummy payment
+    @PostMapping("/create/{orderId}")
+    public ResponseEntity<PaymentResponseDTO> createDummyPayment(@PathVariable Long orderId) {
+        PaymentResponseDTO response = paymentService.createDummyPayment(orderId);
+        return ResponseEntity.ok(response);
+    }
+
+    // 2️⃣ Confirm dummy payment
+    @PostMapping("/confirm")
+    public ResponseEntity<String> confirmDummyPayment(@RequestBody @Valid PaymentConfirmDTO dto) {
+        paymentService.confirmDummyPayment(
+                dto.orderId(),
+                dto.razorpayPaymentId()  // dummy payment ID
+        );
+        return ResponseEntity.ok("Payment confirmed successfully!");
+    }
 }

@@ -1,6 +1,12 @@
-// dto/PaymentResponseDTO.java
 package com.example.backend.dto;
 
-public record PaymentResponseDTO(
-  String razorpayOrderId, String keyId, Double amount
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class PaymentResponseDTO {
+    private String razorpayOrderId; // dummy ID
+    private String keyId;           // dummy key
+    private Double amount;
+}
