@@ -1,5 +1,5 @@
 // src/components/common/Navbar.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../hooks/useCart";
@@ -8,6 +8,20 @@ export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
   const cartCount = cart.reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
+  const [hasUnreadReminder, setHasUnreadReminder] = useState(false);
+
+  // Track unread reminder via localStorage flag 'remindersUnread:<userId>' set by reminder code (we'll add logic there)
+  useEffect(() => {
+    if (!user) return;
+    const key = `remindersUnread:${user.id || user._id || user.userId || 'guest'}`;
+    const check = () => {
+      try { setHasUnreadReminder(localStorage.getItem(key) === '1'); } catch { setHasUnreadReminder(false); }
+    };
+    check();
+    const interval = setInterval(check, 5000);
+    window.addEventListener('storage', check);
+    return () => { clearInterval(interval); window.removeEventListener('storage', check); };
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -78,6 +92,23 @@ export default function Navbar() {
                     )}
                   </NavLink>
                   <NavLink to="/user/orders">Orders</NavLink>
+                  <NavLink
+                    to="/user/profile"
+                    className={({ isActive }) => `relative ${isActive ? 'underline font-semibold' : 'hover:underline'}`}
+                    onClick={() => {
+                      // Clear unread flag when visiting profile
+                      try {
+                        const key = `remindersUnread:${user.id || user._id || user.userId || 'guest'}`;
+                        localStorage.removeItem(key);
+                        setHasUnreadReminder(false);
+                      } catch { /* ignore */ }
+                    }}
+                  >
+                    Profile
+                    {hasUnreadReminder && (
+                      <span className="absolute -top-1 -right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                    )}
+                  </NavLink>
                 </>
               )}
 

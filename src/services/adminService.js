@@ -11,7 +11,8 @@ const adminService = {
   rejectFlorist: (id) => api.post(`/admin/florists/${id}/reject`).then(r => r.data),
 
   // Orders (admin)
-  getAllOrders: () => api.get("/admin/orders").then(r => r.data).catch(() => []),
+  // Do NOT swallow errors; let caller decide fallback so dashboard can scan localStorage
+  getAllOrders: () => api.get("/admin/orders").then(r => r.data),
   getOrder: (id) => api.get(`/admin/orders/${id}`).then(r => r.data),
   updateOrderStatus: (id, status) => api.put(`/admin/orders/${id}/status`, { status }).then(r => r.data),
   // ✅ Add pending applications method
@@ -24,6 +25,7 @@ getPendingFloristApplications: () => api.get("/admin/florists/pending").then(r =
   getCategories: () => api.get("/admin/categories").then(r => r.data),
   createCategory: (name, description) => api.post("/admin/categories", null, { params: { name, description } }).then(r => r.data),
   deleteCategory: (id) => api.delete(`/admin/categories/${id}`).then(r => r.data),
+  setCategoryVisibility: (id, visible) => api.patch(`/admin/categories/${id}/visibility`, { visible }).then(r => r.data),
  getPlatformStats: () => api.get("/admin/stats").then(r => r.data),
 
 

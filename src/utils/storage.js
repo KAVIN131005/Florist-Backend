@@ -27,7 +27,32 @@ export const clearUser = () => {
 
 export const clearAuth = () => { clearToken(); clearUser(); };
 
+// Coupon helpers
+export const setCoupon = (code) => {
+  try { if (code) localStorage.setItem('couponCode', code.toUpperCase()); else localStorage.removeItem('couponCode'); } catch { /* ignore */ }
+};
+export const getCoupon = () => {
+  try { return localStorage.getItem('couponCode'); } catch { return null; }
+};
+export const clearCoupon = () => { setCoupon(null); };
+
+// Reminder helpers (per user)
+export const getReminders = (userId) => {
+  const key = `reminders:${userId || 'guest'}`;
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : []; } catch { return []; }
+};
+export const saveReminders = (userId, list) => {
+  const key = `reminders:${userId || 'guest'}`;
+  try { localStorage.setItem(key, JSON.stringify(list || [])); } catch { /* ignore quota */ }
+};
+export const clearReminders = (userId) => {
+  const key = `reminders:${userId || 'guest'}`;
+  try { localStorage.removeItem(key); } catch { /* ignore */ }
+};
+
 export default {
   saveToken, getToken, clearToken,
   saveUser, getUser, clearUser, clearAuth
+  , setCoupon, getCoupon, clearCoupon,
+  getReminders, saveReminders, clearReminders
 };

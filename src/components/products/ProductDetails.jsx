@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductReviews from "./ProductReviews";
-import api from "../services/api";
+import api from "../../services/api";
 import { useCart } from "../../hooks/useCart";
 
 export default function ProductDetails() {
@@ -27,6 +27,12 @@ export default function ProductDetails() {
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
         <p className="text-gray-700 mb-2">{product.description}</p>
         <p className="text-lg font-semibold text-green-700">₹{product.price}</p>
+        {product.averageRating && (
+          <div className="flex items-center gap-2 text-amber-600 text-sm mb-2">
+            <span className="font-medium">★ {Number(product.averageRating).toFixed(1)}</span>
+            <span className="text-gray-400">/ 5</span>
+          </div>
+        )}
         <p className="text-sm text-gray-500 mb-4">{product.category}</p>
 
   <button onClick={() => addToCart(product)} className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">Add to Cart</button>

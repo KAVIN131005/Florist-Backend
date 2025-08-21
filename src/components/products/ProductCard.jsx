@@ -8,9 +8,15 @@ export default function ProductCard({ product }) {
   // Handle different price field names
   const productPrice = product.pricePer100g || product.price || 0;
   const productCategory = product.categoryName || product.category || 'Uncategorized';
+  const isFeatured = product.featured === true || product.isFeatured === true || product.featured === 'true' || product.isFeatured === 'true';
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-lg p-4 transition transform hover:scale-105">
+    <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg p-4 transition transform hover:scale-105">
+      {isFeatured && (
+        <span className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-yellow-400 text-white text-[10px] font-semibold px-2 py-1 rounded-full shadow">
+          Featured
+        </span>
+      )}
       <img
         src={product.imageUrl || "/images/placeholder.jpg"}
         alt={product.name}

@@ -20,18 +20,6 @@ export default function FloristDashboard() {
           Add Product
         </Link>
         <Link
-          to="/florist/orders"
-          className="bg-purple-600 text-white py-4 rounded text-center shadow hover:opacity-95"
-        >
-          Orders Received
-        </Link>
-        <Link
-          to="/florist/profile"
-          className="bg-yellow-500 text-white py-4 rounded text-center shadow hover:opacity-95"
-        >
-          Profile
-        </Link>
-        <Link
           to="/florist/earnings"
           className="bg-emerald-600 text-white py-4 rounded text-center shadow hover:opacity-95"
         >
