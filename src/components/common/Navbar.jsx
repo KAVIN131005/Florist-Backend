@@ -2,9 +2,12 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../hooks/useCart";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { cart } = useCart();
+  const cartCount = cart.reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
 
   const handleLogout = () => {
     logout();
@@ -58,7 +61,22 @@ export default function Navbar() {
               {user.roles.includes("USER") && (
                 <>
                   <NavLink to="/user/dashboard">Dashboard</NavLink>
-                  <NavLink to="/user/cart">Cart</NavLink>
+                  <NavLink
+                    to="/user/cart"
+                    className={({ isActive }) =>
+                      `relative ${isActive ? "underline font-semibold" : "hover:underline"}`
+                    }
+                  >
+                    <span>Cart</span>
+                    {cartCount > 0 && (
+                      <span
+                        aria-label={`Items in cart: ${cartCount}`}
+                        className="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs font-bold bg-white text-green-700 rounded-full align-middle"
+                      >
+                        {cartCount}
+                      </span>
+                    )}
+                  </NavLink>
                   <NavLink to="/user/orders">Orders</NavLink>
                 </>
               )}

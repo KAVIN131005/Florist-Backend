@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductReviews from "./ProductReviews";
 import api from "../services/api";
+import { useCart } from "../../hooks/useCart";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     api.get(`/products/${id}`).then((res) => setProduct(res.data));
@@ -27,9 +29,7 @@ export default function ProductDetails() {
         <p className="text-lg font-semibold text-green-700">₹{product.price}</p>
         <p className="text-sm text-gray-500 mb-4">{product.category}</p>
 
-        <button className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">
-          Add to Cart
-        </button>
+  <button onClick={() => addToCart(product)} className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">Add to Cart</button>
       </div>
 
       <div className="mt-6 md:col-span-2">
