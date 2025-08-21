@@ -1,0 +1,56 @@
+/* src/styles/utilities.css */
+
+/* Spacing */
+.m-1 { margin: 0.25rem; }
+.m-2 { margin: 0.5rem; }
+.m-3 { margin: 0.75rem; }
+.m-4 { margin: 1rem; }
+.m-5 { margin: 1.25rem; }
+.m-6 { margin: 1.5rem; }
+
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.p-5 { padding: 1.25rem; }
+.p-6 { padding: 1.5rem; }
+
+/* Flex Utilities */
+.flex-center {
+  @apply flex items-center justify-center;
+}
+.flex-between {
+  @apply flex items-center justify-between;
+}
+.flex-col {
+  @apply flex flex-col;
+}
+
+/* Text Utilities */
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+
+/* Color Utilities */
+.text-primary { @apply text-blue-600; }
+.text-secondary { @apply text-gray-600; }
+.text-success { @apply text-green-600; }
+.text-error { @apply text-red-600; }
+.text-warning { @apply text-yellow-600; }
+
+/* Background Utilities */
+.bg-primary { @apply bg-blue-600; }
+.bg-secondary { @apply bg-gray-200; }
+.bg-success { @apply bg-green-600; }
+.bg-error { @apply bg-red-600; }
+.bg-warning { @apply bg-yellow-400; }
+
+/* Shadow Utilities */
+.shadow-sm { @apply shadow-sm; }
+.shadow-md { @apply shadow-md; }
+.shadow-lg { @apply shadow-lg; }
+.shadow-xl { @apply shadow-xl; }
