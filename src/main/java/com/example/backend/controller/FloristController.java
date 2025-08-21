@@ -16,7 +16,7 @@ public class FloristController {
 
   @PostMapping("/apply")
   public FloristApplication apply(@RequestBody @Valid FloristApplicationDTO dto) {
-    return floristService.apply(dto.shopName(), dto.description(), dto.gstin());
+    return floristService.apply(dto.shopName(), dto.description(), dto.gstNumber());
   }
 
   @GetMapping("/applications/pending")

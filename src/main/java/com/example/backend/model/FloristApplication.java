@@ -21,7 +21,7 @@ public class FloristApplication {
 
     private String shopName;
     private String description;
-    private String gstin;
+    private String gstNumber;
 
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -7,10 +7,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -43,4 +46,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
     chain.doFilter(req, res);
   }
+
+  
+private Long getCurrentUserId() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    if (auth == null || !auth.isAuthenticated()) {
+        throw new RuntimeException("User not authenticated");
+    }
+
+    // Assuming your principal is UserDetails or contains the username/email
+    UserDetails userDetails = (UserDetails) auth.getPrincipal();
+
+    // Fetch user from DB using email/username
+    User user = userRepo.findByEmail(userDetails.getUsername())
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    return user.getId();
+}
 }
