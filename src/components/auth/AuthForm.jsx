@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function AuthForm({ type, onSubmit, loading }) {
   const isLogin = type === "login";
@@ -18,7 +19,7 @@ export default function AuthForm({ type, onSubmit, loading }) {
   };
 
   return (
-    <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-md mx-auto">
+  <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-md mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-center">
         {isLogin ? "Login to Your Account" : "Create a New Account"}
       </h2>
@@ -69,6 +70,13 @@ export default function AuthForm({ type, onSubmit, loading }) {
           {loading ? "Processing..." : isLogin ? "Login" : "Register"}
         </button>
       </form>
+      <p className="mt-6 text-center text-sm text-gray-600">
+        {isLogin ? (
+          <>Don’t have an account? <Link to="/register" className="text-indigo-600 hover:underline font-medium">Register</Link></>
+        ) : (
+          <>Already have an account? <Link to="/login" className="text-indigo-600 hover:underline font-medium">Login</Link></>
+        )}
+      </p>
     </div>
   );
 }

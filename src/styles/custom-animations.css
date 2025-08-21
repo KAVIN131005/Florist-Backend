@@ -1,0 +1,234 @@
+/* Custom animations and tailwind utilities */
+
+/* Text shadow utilities */
+.text-shadow-sm {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.text-shadow-md {
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.text-shadow-lg {
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.text-shadow-pink {
+  text-shadow: 0 0 5px rgba(219, 39, 119, 0.3);
+}
+
+/* Button components */
+.btn-pink {
+  padding: 0.5rem 1rem;
+  background-color: rgb(219, 39, 119);
+  color: white;
+  border-radius: 0.5rem;
+  transition-property: all;
+  transition-duration: 300ms;
+  transform: translateZ(0);
+}
+
+.btn-pink:hover {
+  background-color: rgb(190, 24, 93);
+  transform: scale(1.05);
+}
+
+.btn-pink:focus {
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(236, 72, 153);
+  --tw-ring-offset-width: 2px;
+}
+
+.dark .btn-pink {
+  background-color: rgb(157, 23, 77);
+}
+
+.dark .btn-pink:hover {
+  background-color: rgb(190, 24, 93);
+}
+
+/* Outline button */
+.btn-outline-pink {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid rgb(219, 39, 119);
+  color: rgb(219, 39, 119);
+  border-radius: 0.5rem;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.btn-outline-pink:hover {
+  background-color: rgb(253, 242, 248);
+}
+
+.dark .btn-outline-pink {
+  border-color: rgb(244, 114, 182);
+  color: rgb(244, 114, 182);
+}
+
+.dark .btn-outline-pink:hover {
+  background-color: rgba(157, 23, 77, 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transform: translateZ(0);
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.card-hover:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 10px 15px -3px rgba(157, 23, 77, 0.1), 0 4px 6px -4px rgba(157, 23, 77, 0.1);
+}
+
+/* Input fields */
+.input-field {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 0.5rem;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: rgb(236, 72, 153);
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(236, 72, 153);
+}
+
+.dark .input-field {
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  color: white;
+}
+
+/* Custom animations */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce 3s infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Image hover effects */
+.img-zoom-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.img-zoom {
+  transition: transform 0.5s ease;
+}
+
+.img-zoom:hover {
+  transform: scale(1.1);
+}
+
+.img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.img-zoom-container:hover .img-overlay {
+  opacity: 1;
+}
+
+/* Dark mode transitions */
+.dark-transition {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Shine effect for buttons and cards */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 20%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(30deg);
+  transition: transform 0.6s;
+}
+
+.shine:hover::after {
+  transform: rotate(30deg) translateX(300%);
+}
+
+/* Responsive grid utilities */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.responsive-grid-sm {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.responsive-grid-lg {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}

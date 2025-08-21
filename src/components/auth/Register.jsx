@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AuthForm from "./AuthForm";
 import api from "../../services/api";
 
@@ -22,14 +22,8 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
       <AuthForm type="register" onSubmit={handleRegister} loading={loading} />
-      <p className="mt-4 text-center text-sm">
-        Already have an account?{" "}
-        <Link to="/login" className="text-indigo-600 hover:underline">
-          Login
-        </Link>
-      </p>
     </div>
   );
 }
