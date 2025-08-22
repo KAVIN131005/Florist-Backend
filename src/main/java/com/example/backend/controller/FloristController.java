@@ -15,6 +15,7 @@ public class FloristController {
   private final FloristService floristService;
 
   @PostMapping("/apply")
+  // No authentication required for florist application
   public FloristApplication apply(@RequestBody @Valid FloristApplicationDTO dto) {
     return floristService.apply(dto.shopName(), dto.description(), dto.gstNumber());
   }
