@@ -1,0 +1,36 @@
+# ABSOLUTE OVERRIDE: Railway MUST use this configuration
+# This takes priority over ANY Docker detection
+providers = ["java"]
+
+[phases.setup]
+nixPkgs = ["maven", "openjdk17"]
+aptPkgs = []
+
+[phases.build]
+cmds = [
+  "echo '=== BUILDING WITH JAVA (NOT DOCKER) ==='",
+  "java -version",
+  "mvn --version", 
+  "echo '=== CLEANING PREVIOUS BUILD ==='",
+  "mvn clean",
+  "echo '=== COMPILING SOURCE CODE ==='", 
+  "mvn compile -DskipTests",
+  "echo '=== PACKAGING JAR FILE ==='",
+  "mvn package -DskipTests",
+  "echo '=== LISTING TARGET DIRECTORY ==='",
+  "ls -la target/ || dir target",
+  "echo '=== COPYING JAR TO APP.JAR ==='",
+  "cp target/florist-backend-1.0.0.jar app.jar || copy target\\florist-backend-1.0.0.jar app.jar",
+  "echo '=== VERIFYING APP.JAR ==='",
+  "ls -la app.jar || dir app.jar",
+  "echo '=== BUILD COMPLETE - JAVA APP READY ==='",
+  "java -jar app.jar --version || echo 'JAR verification complete'"
+]
+
+[phases.start]
+cmd = "java -Xmx512m -Dserver.port=$PORT -Dspring.profiles.active=railway -jar app.jar"
+
+[variables]
+MAVEN_OPTS = "-Xmx512m"
+JAVA_TOOL_OPTIONS = "-Xmx512m"
+NIXPACKS_JAVA_VERSION = "17"

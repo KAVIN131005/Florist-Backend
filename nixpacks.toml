@@ -1,7 +1,1 @@
 providers = ["java"]
-
-[phases.build]
-cmds = ["mvn clean package -DskipTests"]
-
-[phases.start]
-cmd = "java -jar target/florist-backend-1.0.0.jar --server.port=$PORT --spring.profiles.active=railway"
