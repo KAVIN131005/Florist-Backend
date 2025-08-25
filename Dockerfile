@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile optimized for Railway deployment
+# Multi-stage Dockerfile optimized for Railway deployment - v2
 # Build stage - use Maven with OpenJDK 17
 FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 
