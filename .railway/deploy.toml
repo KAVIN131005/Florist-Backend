@@ -1,0 +1,11 @@
+# Railway deployment configuration
+# Force nixpacks Java provider (no Docker)
+
+[build]
+provider = "nixpacks"
+nixpacksConfigPath = "nixpacks.toml"
+
+[deploy]
+numReplicas = 1
+sleepApplication = false
+restartPolicyType = "ON_FAILURE"

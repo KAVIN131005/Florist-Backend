@@ -1,4 +1,5 @@
-# Force Railway to use Java/Maven build (NOT Docker)
+# CRITICAL: Force Railway to use ONLY Java/Maven (NEVER Docker)
+# This prevents Railway from detecting docker-compose and using Docker builds
 providers = ["java"]
 
 [phases.setup]
@@ -6,11 +7,13 @@ nixPkgs = ["maven", "openjdk17", "curl"]
 
 [phases.build]
 cmds = [
+  "echo 'Building with Java provider (NOT Docker)'",
   "mvn clean compile -DskipTests -q",
   "mvn package -DskipTests -q",
-  "ls -la target/",
+  "ls -la target/ || dir target",
   "cp target/florist-backend-1.0.0.jar app.jar",
-  "ls -la app.jar"
+  "ls -la app.jar || dir app.jar",
+  "echo 'JAR file ready for deployment'"
 ]
 
 [phases.start]
