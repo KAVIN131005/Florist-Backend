@@ -107,8 +107,16 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>${spring-boot.version}</version>
             <configuration>
-                <mainClass>com.example.backend.FloristBackendApplication</mainClass>
+                <mainClass>com.example.backend.BackendApplication</mainClass>
+                <executable>true</executable>
             </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>
+                    </goals>
+                </execution>
+            </executions>
         </plugin>
 
         <!-- Compiler Plugin: forces Java 17 compatibility -->

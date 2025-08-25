@@ -2,10 +2,13 @@
 providers = ["java"]
 
 [phases.build]
-cmds = ["mvn clean package -DskipTests"]
+cmds = [
+  "mvn clean package -DskipTests",
+  "cp target/florist-backend-1.0.0.jar app.jar"
+]
 
 [phases.start]
-cmd = "java -Dserver.port=$PORT -jar target/florist-backend-1.0.0.jar"
+cmd = "java -Dserver.port=$PORT -Dspring.profiles.active=railway -jar app.jar"
 
 [variables]
 MAVEN_OPTS = "-Xmx1024m"
