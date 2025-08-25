@@ -1,0 +1,15 @@
+# Railway Service Configuration
+# This service MUST use Java/Maven (NOT Docker)
+
+[build]
+provider = "java"
+nixpacks = true
+
+[deploy]
+healthcheckPath = "/actuator/health"
+healthcheckTimeout = 300
+
+[variables]
+# Force Java runtime
+NIXPACKS_JAVA_VERSION = "17"
+NIXPACKS_MAVEN_VERSION = "3.9"

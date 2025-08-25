@@ -1,9 +1,11 @@
-# Ignore Docker files to prevent Docker build
-Dockerfile*
-docker-compose*
-.dockerignore
+# CRITICAL: Ignore ALL Docker files to force Java builds
+**/Dockerfile*
+**/docker-compose*
+**/.dockerignore
+**/container*
+**/.docker*
 
-# Ignore large directories
+# Ignore build artifacts
 target/
 .mvn/wrapper/maven-wrapper.jar
 node_modules/
@@ -18,6 +20,10 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# Ignore backup files
+# Ignore backup and temp files
 *.backup
 *.tmp
+*.log
+
+# Ignore GitHub workflows (they reference Docker)
+.github/
