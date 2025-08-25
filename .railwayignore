@@ -1,0 +1,23 @@
+# Ignore Docker files to prevent Docker build
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Ignore large directories
+target/
+.mvn/wrapper/maven-wrapper.jar
+node_modules/
+.git/
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore backup files
+*.backup
+*.tmp

@@ -1,15 +1,18 @@
-# Railway Nixpacks configuration for Spring Boot
+# Force Railway to use Java/Maven build (NOT Docker)
 providers = ["java"]
+
+[phases.setup]
+nixPkgs = ["maven", "openjdk17"]
 
 [phases.build]
 cmds = [
-  "mvn clean package -DskipTests",
+  "mvn clean package -DskipTests -q",
   "cp target/florist-backend-1.0.0.jar app.jar"
 ]
 
 [phases.start]
-cmd = "java -Dserver.port=$PORT -Dspring.profiles.active=railway -jar app.jar"
+cmd = "java -Xmx512m -Dserver.port=$PORT -Dspring.profiles.active=railway -jar app.jar"
 
 [variables]
-MAVEN_OPTS = "-Xmx1024m"
-JAVA_TOOL_OPTIONS = "-Xmx1024m -XX:MaxMetaspaceSize=256m"
+MAVEN_OPTS = "-Xmx512m -XX:MaxMetaspaceSize=128m"
+JAVA_TOOL_OPTIONS = "-Xmx512m -XX:MaxMetaspaceSize=128m"
