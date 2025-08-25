@@ -1,4 +1,0 @@
-# This file explicitly tells Railway to use Java/Maven
-# Railway Priority: pom.xml + .buildpacks -> nixpacks Java provider
-
-java
