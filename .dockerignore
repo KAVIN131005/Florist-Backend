@@ -1,0 +1,9 @@
+target
+*.md
+.git
+.gitignore
+.idea
+.vscode
+*.log
+*.swp
+.DS_Store
