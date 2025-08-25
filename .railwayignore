@@ -1,0 +1,4 @@
+# Files to ignore during Railway build
+target/
+*.log
+.git/
