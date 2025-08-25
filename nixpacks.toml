@@ -2,12 +2,15 @@
 providers = ["java"]
 
 [phases.setup]
-nixPkgs = ["maven", "openjdk17"]
+nixPkgs = ["maven", "openjdk17", "curl"]
 
 [phases.build]
 cmds = [
-  "mvn clean package -DskipTests -q",
-  "cp target/florist-backend-1.0.0.jar app.jar"
+  "mvn clean compile -DskipTests -q",
+  "mvn package -DskipTests -q",
+  "ls -la target/",
+  "cp target/florist-backend-1.0.0.jar app.jar",
+  "ls -la app.jar"
 ]
 
 [phases.start]
