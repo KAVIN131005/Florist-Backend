@@ -1,0 +1,12 @@
+# Railway Nixpacks configuration for Spring Boot
+providers = ["java"]
+
+[phases.build]
+cmds = ["mvn clean package -DskipTests"]
+
+[phases.start]
+cmd = "java -Dserver.port=$PORT -jar target/florist-backend-1.0.0.jar"
+
+[variables]
+MAVEN_OPTS = "-Xmx1024m"
+JAVA_TOOL_OPTIONS = "-Xmx1024m -XX:MaxMetaspaceSize=256m"

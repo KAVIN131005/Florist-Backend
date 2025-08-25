@@ -1,0 +1,50 @@
+# 🚀 Railway Dashboard Settings - Copy These Variables
+
+# Navigate to: Railway Dashboard → Your Project → Backend Service → Variables Tab
+# Add each of these as separate environment variables:
+
+# ==========================================
+# DATABASE CONNECTION (Get from MySQL Service)
+# ==========================================
+MYSQLHOST=mysql.railway.internal
+MYSQLPORT=3306
+MYSQLDATABASE=flower
+MYSQLUSER=florist_user
+MYSQLPASSWORD=florist_password
+
+# ==========================================
+# APPLICATION CONFIGURATION
+# ==========================================
+SPRING_PROFILES_ACTIVE=railway
+PORT=8080
+
+# ==========================================
+# JWT SECURITY SETTINGS
+# ==========================================
+APP_JWT_SECRET=1XEr+3OcYxBMQmPbU4whr3vHbXOwNYeA7+QmxG6BbZsLtsYzmepgdvYXmKSH57JJHWLOFUznSKstgTmsXRNCdA==
+APP_JWT_EXPIRATION_MS=86400000
+
+# ==========================================
+# CORS (Frontend Access)
+# ==========================================
+APP_CORS_ALLOWED_ORIGINS=https://florist-frontend-phi.vercel.app,http://localhost:5173,http://localhost:5174
+
+# ==========================================
+# PAYMENT GATEWAY (RAZORPAY)
+# ==========================================
+RAZORPAY_KEY_ID=rzp_test_XD8mdRSpebRkBx
+RAZORPAY_KEY_SECRET=mAvxGJVBHaECAdukHDfnrpVH
+
+# ==========================================
+# ADMIN USER SETTINGS
+# ==========================================
+APP_ADMIN_EMAIL=admin@florist.com
+APP_ADMIN_PASSWORD=Admin@123
+APP_ADMIN_NAME=Platform Admin
+
+# ==========================================
+# OPTIONAL: LOGGING CONFIGURATION
+# ==========================================
+LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=WARN
+LOGGING_LEVEL_ORG_HIBERNATE_SQL=WARN
+LOGGING_LEVEL_COM_EXAMPLE_BACKEND=INFO

@@ -1,0 +1,13 @@
+# Azure Developer CLI configuration file
+
+name: florist-backend
+metadata:
+  template: florist-backend@0.0.1-beta
+services:
+  backend:
+    project: ./
+    language: java
+    host: containerapp
+    docker:
+      path: ./Dockerfile
+      context: ./

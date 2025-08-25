@@ -1,54 +1,46 @@
-# Build artifacts
-target/
-*.jar
-*.war
+# Git
+.git
+.gitignore
 
-# IDE files
+# Documentation
+README.md
+*.md
+
+# Azure
+.azure/
+
+# IDE
 .idea/
 .vscode/
 *.iml
-*.ipr
-*.iws
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
-# Version control
-.git/
-.gitignore
-.gitattributes
-
-# Documentation
-*.md
-README*
-LICENSE*
-CHANGELOG*
-
 # Logs
 *.log
-logs/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Scripts
+*.bat
+*.sh
+
+# Target directory (except the JAR)
+target/
+!target/florist-backend-1.0.0.jar
 
 # Test files
-*.test
-coverage/
-
-# Node modules (if any)
-node_modules/
+src/test/
 
 # Temporary files
 *.tmp
 *.temp
-*.swp
-*.swo
-
-# Railway files
-railway.json
 
 # Environment files
 .env
-.env.*
-!.env.example
-
-# Maven wrapper jar (we copy it explicitly)
-!.mvn/wrapper/maven-wrapper.jar
+.env.local
