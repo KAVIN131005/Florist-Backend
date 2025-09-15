@@ -13,7 +13,7 @@ import lombok.*;
 @Table(indexes = {
         @Index(name = "idx_product_active", columnList = "active"),
         @Index(name = "idx_product_featured", columnList = "featured"),
-        @Index(name = "idx_product_category", columnList = "category"),
+        @Index(name = "idx_product_category", columnList = "category_id"),
         @Index(name = "idx_product_name", columnList = "name")
 })
 public class Product {

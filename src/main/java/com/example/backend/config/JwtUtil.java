@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.security.Key;
+import java.security.MessageDigest;
 import java.util.Date;
 import java.util.Map;
 
@@ -16,7 +17,18 @@ public class JwtUtil {
   public JwtUtil(
       @Value("${app.jwt.secret}") String secret,
       @Value("${app.jwt.expiration-ms}") long expirationMs) {
-    this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    byte[] keyBytes = secret.getBytes();
+    // If secret is shorter than 32 bytes (256 bits), derive a 256-bit key using SHA-256
+    if (keyBytes.length < 32) {
+      try {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        keyBytes = digest.digest(keyBytes);
+      } catch (Exception e) {
+        // fallback to original bytes if digest fails (very unlikely)
+        keyBytes = secret.getBytes();
+      }
+    }
+    this.key = Keys.hmacShaKeyFor(keyBytes);
     this.expirationMs = expirationMs;
   }
 

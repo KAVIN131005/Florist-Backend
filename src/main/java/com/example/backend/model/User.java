@@ -6,7 +6,9 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity 
+@Table(name = "users") // Use 'users' instead of 'user' to avoid H2 reserved keyword conflict
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
