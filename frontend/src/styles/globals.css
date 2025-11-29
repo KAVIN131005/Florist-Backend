@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Dark mode base overrides */
+html.dark body {
+	background-color: #0f172a; /* slate-900 */
+	color: #f1f5f9; /* slate-100 */
+}
+
+html.dark .bg-white { background-color: #1e293b !important; } /* slate-800 */
+html.dark .text-gray-800 { color: #f1f5f9 !important; }
+html.dark .text-gray-700 { color: #e2e8f0 !important; }
+html.dark .text-gray-600 { color: #cbd5e1 !important; }
+html.dark .text-gray-500 { color: #94a3b8 !important; }
+html.dark .border-gray-200 { border-color: #334155 !important; }
+html.dark .border-gray-100 { border-color: #1e293b !important; }
+html.dark input, html.dark textarea { background-color: #0f172a; color: #f1f5f9; border-color: #334155; }
+html.dark .shadow-lg, html.dark .shadow { box-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+html.dark a:hover { color: #38bdf8; }
