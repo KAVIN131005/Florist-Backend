@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useCart } from "../../hooks/useCart";
+import { useAuth } from "../../hooks/useAuth";
 import { formatCurrency } from "../../utils/helpers";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../../context/themeContextDefinition";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { isAuthenticated } = useAuth();
   const [promo, setPromo] = useState("");
   const applied = promo.trim().toUpperCase() === "7FOREVER"; // coupon 7Forever (case-insensitive)
   const { dark } = useContext(ThemeContext);
@@ -210,15 +212,27 @@ export default function Cart() {
               </svg>
               <span>Continue Shopping</span>
             </Link>
-            <Link 
-              to="/checkout" 
-              className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-3 px-4 rounded-full font-medium hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] flex items-center justify-center gap-2"
-            >
-              <span>Proceed to Checkout</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
+            {isAuthenticated() ? (
+              <Link 
+                to="/checkout" 
+                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-3 px-4 rounded-full font-medium hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] flex items-center justify-center gap-2"
+              >
+                <span>Proceed to Checkout</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+            ) : (
+              <Link 
+                to="/login" 
+                className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-3 px-4 rounded-full font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] flex items-center justify-center gap-2"
+              >
+                <span>Login to Checkout</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import api from "../../services/api";
 import orderService from "../../services/orderService";
 import { useAuth } from "../../hooks/useAuth";
 import { ThemeContext } from "../../context/themeContextDefinition";
@@ -17,8 +16,8 @@ export default function Orders() {
       // If we have a logged in user try backend, else just read guest/local
       if (userId) {
         try {
-          const res = await api.get("/api/orders/my", { withCredentials: true });
-          if (!cancelled) setOrders(res.data || []);
+          const backendOrders = await orderService.myOrders();
+          if (!cancelled) setOrders(backendOrders || []);
           return;
         } catch {
           // fall through to local
@@ -98,7 +97,7 @@ export default function Orders() {
                 <div className="flex justify-between items-end mb-4">
                   <div>
                     <p className={`text-xs ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Total Amount</p>
-                    <p className={`text-lg font-bold ${dark ? 'text-green-400' : 'text-green-600'}`}>₹{order.total || '0.00'}</p>
+                    <p className={`text-lg font-bold ${dark ? 'text-green-400' : 'text-green-600'}`}>₹{order.totalAmount || '0.00'}</p>
                   </div>
                   <div>
                     <p className={`text-xs ${dark ? 'text-gray-400' : 'text-gray-500'} text-right`}>Order Date</p>
@@ -110,10 +109,10 @@ export default function Orders() {
                   <p className={`text-sm font-medium mb-2 ${dark ? 'text-white' : ''}`}>Items</p>
                   {order.items && order.items.length > 0 ? (
                     <ul className={`text-sm ${dark ? 'text-gray-300' : 'text-gray-600'} space-y-1 max-h-24 overflow-y-auto pr-2 scrollbar-thin`}>
-                      {order.items.map(it => (
-                        <li key={it.id} className="flex justify-between items-center">
-                          <span className="truncate flex-1">{it.name} × {it.quantity}</span>
-                          <span className={`font-medium ${dark ? 'text-white' : 'text-gray-800'}`}>₹{(it.price * it.quantity).toFixed(2)}</span>
+                      {order.items.map((it, index) => (
+                        <li key={index} className="flex justify-between items-center">
+                          <span className="truncate flex-1">{it.productName} - {it.grams}g</span>
+                          <span className={`font-medium ${dark ? 'text-white' : 'text-gray-800'}`}>₹{it.subtotal.toFixed(2)}</span>
                         </li>
                       ))}
                     </ul>

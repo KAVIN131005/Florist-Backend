@@ -1,10 +1,11 @@
-/* eslint-disable no-undef */
 import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import adminService from "../../services/adminService";
 import { ThemeContext } from "../../context/themeContextDefinition";
 
 export default function FloristApplications() {
   const { dark, toggle } = useContext(ThemeContext);
+  const navigate = useNavigate();
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,7 +127,7 @@ export default function FloristApplications() {
               
               <div className="flex flex-wrap gap-2">
                 <button 
-                  onClick={() => nav(`/admin/florists/${a.id}`)} 
+                  onClick={() => navigate(`/admin/applications/${a.id}`)} 
                   className={`
                     px-4 py-2 rounded-full transition-all duration-300 font-medium
                     ${dark 

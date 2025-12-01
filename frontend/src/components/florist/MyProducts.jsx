@@ -6,11 +6,21 @@ export default function MyProducts() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    api.get("/products/mine")
-      .then(res => setProducts(res.data))
-      .catch(err => console.error("Error fetching products:", err));
-  }, []);
-
+    api
+      .get("/products/mine", {
+        params: {
+          page: 0,
+          size: 12, // match your backend defaults
+        },
+      })
+      .then((res) => setProducts(res.data))
+      .catch((err) => {
+        console.error("Error fetching products:", err.response || err);
+        console.error("Error response data:", err.response?.data);
+        console.error("Error status:", err.response?.status);
+        console.error("Error message:", err.message);
+      });
+  }, [setProducts]);
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">

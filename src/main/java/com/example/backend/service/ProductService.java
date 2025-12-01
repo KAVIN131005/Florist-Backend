@@ -1,5 +1,17 @@
 package com.example.backend.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.backend.dto.ProductCreateDTO;
 import com.example.backend.dto.ProductResponseDTO;
 import com.example.backend.model.Category;
@@ -8,16 +20,9 @@ import com.example.backend.model.Role;
 import com.example.backend.model.User;
 import com.example.backend.repository.CategoryRepository;
 import com.example.backend.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +118,7 @@ public class ProductService {
     }
 
     // LIST PRODUCTS
+    @Transactional(readOnly = true)
     public Page<ProductResponseDTO> list(String q, String categoryName, Double minPrice, Double maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -129,7 +135,7 @@ public class ProductService {
             if (minPrice != null) predicates.add(cb.greaterThanOrEqualTo(root.get("pricePer100g"), minPrice));
             if (maxPrice != null) predicates.add(cb.lessThanOrEqualTo(root.get("pricePer100g"), maxPrice));
 
-            return cb.and(predicates.toArray(new Predicate[0]));
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         };
 
         return productRepo.findAll(spec, pageable).map(this::toDTO);
@@ -149,6 +155,7 @@ public class ProductService {
     }
 
     // GET PRODUCTS BY FLORIST
+    @Transactional(readOnly = true)
     public List<ProductResponseDTO> findByFlorist(User florist) {
         return productRepo.findByFlorist(florist)
                 .stream()

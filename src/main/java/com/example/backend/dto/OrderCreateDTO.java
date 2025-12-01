@@ -1,3 +1,11 @@
 // dto/OrderCreateDTO.java
 package com.example.backend.dto;
-public record OrderCreateDTO(String address) {}
+
+import java.util.List;
+
+public record OrderCreateDTO(
+    String address,
+    List<CartItemRequest> cartItems
+) {
+    public record CartItemRequest(Long productId, Integer quantity) {}
+}

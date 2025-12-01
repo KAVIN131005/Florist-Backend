@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import orderService from "../../services/orderService";
 import paymentService from "../../services/paymentService";
+import cartService from "../../services/cartService";
 import { useCart } from "../../hooks/useCart";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -57,7 +58,7 @@ export default function Checkout() {
     // Helper: local success finalize
   const finalizeSuccess = (payment = { method: "RAZORPAY", status: "PAID" }) => {
       const snapshotTotal = total; // discounted total
-      orderService.createLocalOrder({
+      const order = orderService.createLocalOrder({
         userId,
         items: cart,
         total: snapshotTotal,
@@ -66,8 +67,22 @@ export default function Checkout() {
         discount: couponApplied ? { code: '7FOREVER', amount: 20 } : undefined,
         rawTotal,
       });
+      
+      // If payment is successful, schedule automatic delivery update after 5 seconds
+      if (payment.status === "PAID") {
+        setTimeout(() => {
+          try {
+            // Update order status to DELIVERED
+            orderService.updateLocalOrderStatus(userId, order.id, "DELIVERED");
+            console.log(`Order ${order.id} automatically marked as delivered`);
+          } catch (error) {
+            console.error("Failed to auto-update delivery status:", error);
+          }
+        }, 5000); // 5 seconds delay
+      }
+      
       clearCart();
-  try { localStorage.removeItem('couponCode'); } catch { /* ignore */ }
+      try { localStorage.removeItem('couponCode'); } catch { /* ignore */ }
       navigate("/user/orders");
     };
 
@@ -76,8 +91,33 @@ export default function Checkout() {
       const backendAvailable = !!paymentService?.createOrder && !!orderService?.createFromCart;
       if (backendAvailable) {
         try {
-          // 1) Create backend order (send cart items if backend expects them; if not will ignore)
-          const created = await orderService.createFromCart({ ...delivery }, cart.map(c => ({ productId: c.id, quantity: c.quantity })));
+          // 0) Sync localStorage cart to backend first
+          try {
+            // Clear backend cart first
+            await cartService.clearCart();
+            // Add all localStorage items to backend cart
+            for (const item of cart) {
+              await cartService.addItem({ 
+                productId: item.id, 
+                quantity: item.quantity 
+              });
+            }
+          } catch (cartSyncError) {
+            console.warn("Failed to sync cart to backend, will use direct cart items approach");
+            // Don't throw, will use direct cart items instead
+          }
+
+          // 1) Create backend order (try direct cart items first, fallback to synced cart)
+          const addressString = `${delivery.fullName}, ${delivery.addressLine}, ${delivery.city}, ${delivery.postalCode}. Phone: ${delivery.phone}`;
+          let created;
+          try {
+            // Try creating order with cart items directly (new approach)
+            created = await orderService.createFromCartItems(addressString, cart);
+          } catch (directOrderError) {
+            console.warn("Direct cart items failed, trying synced cart approach", directOrderError);
+            // Fallback to original cart-based approach
+            created = await orderService.createFromCart(addressString);
+          }
           const appOrderId = created.id || created._id;
           if (!appOrderId) throw new Error("No order id returned");
 

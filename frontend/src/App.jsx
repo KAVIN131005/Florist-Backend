@@ -39,6 +39,7 @@ import OrderDetails from "./components/florist/OrderDetails";
 // Admin
 import AdminDashboard from "./components/admin/AdminDashboard";
 import FloristApplications from "./components/admin/FloristApplications";
+import ApplicationDetails from "./components/admin/ApplicationDetails";
 import AllFlorists from "./components/admin/AllFlorists";
 
 function App() {
@@ -59,12 +60,15 @@ function App() {
           {/* Public My Orders (no forced login) */}
           <Route path="/user/orders" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetailsLocal />} />
+          
+          {/* Cart should be accessible to everyone */}
+          <Route path="/user/cart" element={<Cart />} />
+          <Route path="/cart" element={<Cart />} />
 
           {/* User Protected Routes */}
           <Route element={<ProtectedRoute requireRole="USER" />}>
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/user/profile" element={<Profile />} />
-            <Route path="/user/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} /> {/* ✅ Checkout */}
             <Route path="/user/become-florist" element={<BecomeFlorist />} />
           </Route>
@@ -84,6 +88,8 @@ function App() {
           <Route element={<ProtectedRoute requireRole="ADMIN" />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/florist-applications" element={<FloristApplications />} />
+            <Route path="/admin/applications" element={<FloristApplications />} />
+            <Route path="/admin/applications/:id" element={<ApplicationDetails />} />
             <Route path="/admin/all-florists" element={<AllFlorists />} />
           </Route>
 

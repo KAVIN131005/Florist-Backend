@@ -43,10 +43,23 @@ const nextStatusMap = {
 };
 
 const orderService = {
-  // Backend expects { address, cartItems: [{ productId, grams }] }
-  createFromCart: (address, cartItems) => api.post("/api/orders", { address, cartItems }).then(r => r.data),
-  myOrders: () => api.get("/api/orders").then(r => r.data),
-  getOrder: (id) => api.get(`/api/orders/${id}`).then(r => r.data),
+  // Backend expects just an address string - it gets cart items from the user's cart in the database
+  createFromCart: (address) => api.post("/orders", { address }).then(r => r.data),
+  
+  // New method: Create order with cart items directly (bypasses database cart sync)
+  createFromCartItems: (address, cartItems) => {
+    const payload = {
+      address,
+      cartItems: cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }))
+    };
+    return api.post("/orders", payload).then(r => r.data);
+  },
+  
+  myOrders: () => api.get("/orders").then(r => r.data),
+  getOrder: (id) => api.get(`/orders/${id}`).then(r => r.data),
 
   // Fallback: create order purely on frontend (status paid if payment simulated)
   createLocalOrder: ({ userId, items, total, address, payment = { method: "RAZORPAY", status: "PAID" } }) => {

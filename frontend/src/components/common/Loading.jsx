@@ -66,7 +66,7 @@ export default function Loading({ message = "Loading...", size = "medium" }) {
       </div>
       
       {/* Keyframe animations for dots */}
-      <style jsx>{`
+      <style>{`
         @keyframes loadingDot1 {
           0%, 20% { opacity: 0; }
           40%, 100% { opacity: 1; }

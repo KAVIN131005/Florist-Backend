@@ -30,7 +30,11 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product, quantity = 1) => {
     const productId = product?.id || product?._id;
-    if (!productId) return; // cannot add without an id
+    if (!productId) {
+      console.warn("Cannot add product to cart: missing product ID", product);
+      return; // cannot add without an id
+    }
+    console.log("Adding to cart:", { product, quantity, productId });
     setCart((prev) => {
       const existing = prev.find((item) => item.id === productId);
       if (existing) {
@@ -47,8 +51,9 @@ export const CartProvider = ({ children }) => {
           id: productId,
           name: product.name,
           price: product.price ?? product.pricePer100g ?? 0,
+          pricePer100g: product.pricePer100g ?? product.price ?? 0,
           imageUrl: product.imageUrl,
-          category: product.categoryName || product.category,
+          categoryName: product.categoryName || product.category,
           floristName: product.floristName,
           quantity,
           // Keep original raw product for details pages if needed

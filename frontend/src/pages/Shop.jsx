@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductGrid from "../components/products/ProductGrid";
-import api from "../services/api";
 import Loading from "../components/common/Loading";
-import adminService from "../services/adminService";
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
@@ -13,10 +11,27 @@ export default function Shop() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await api.get("/products");
-        setProducts(res.data.content); // ✅ Use .content from Page object
+        // Create a request without authentication for public products endpoint
+        const res = await fetch("http://localhost:8081/api/products", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        console.log("Products response:", data); // Debug log
+        
+        // Handle both paginated (Page) and direct array responses
+        const productData = data.content || data || [];
+        setProducts(Array.isArray(productData) ? productData : []);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching products:", err);
+        setProducts([]); // Set empty array on error
       } finally {
         setLoading(false);
       }
@@ -24,10 +39,18 @@ export default function Shop() {
     fetchProducts();
   }, []);
 
-  // Load category visibility (admin endpoint) with fallback to local storage map
+  // Load category visibility using public endpoint
   useEffect(() => {
     let cancelled = false;
-    adminService.getCategories()
+    
+    // Use public categories endpoint instead of admin endpoint
+    fetch("http://localhost:8081/api/categories", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
       .then(cats => {
         if (cancelled) return;
         // Expect each category to maybe have a visible flag; fallback to true if missing
@@ -36,11 +59,10 @@ export default function Shop() {
         setVisibleCategories(map);
       })
       .catch(() => {
-        // Fallback: local map if admin not accessible
+        // Fallback: local map if categories not accessible
         try {
           const localMap = JSON.parse(localStorage.getItem("localCategoryVisibility") || "{}");
-          // local map keyed by id; can't reliably map name here, so we just ignore filtering if we lack names
-          setVisibleCategories(localMap); // may be id keyed; filter later tries both
+          setVisibleCategories(localMap);
         } catch {
           setVisibleCategories({});
         }

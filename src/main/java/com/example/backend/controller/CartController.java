@@ -24,4 +24,7 @@ public class CartController {
 
   @DeleteMapping("/items/{itemId}")
   public Cart remove(@PathVariable Long itemId) { return cartService.removeItem(itemId); }
+
+  @DeleteMapping
+  public void clearCart() { cartService.clearMyCart(); }
 }

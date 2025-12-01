@@ -88,108 +88,37 @@ export default function Navbar() {
           >
             Contact
           </NavLink>
+          
+          {/* Cart is available to everyone */}
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              `relative px-3 py-2 rounded-full transition-all duration-300 ${
+                isActive 
+                  ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
+                  : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
+              }`
+            }
+          >
+            <span>Cart</span>
+            {cartCount > 0 && (
+              <span
+                aria-label={`Items in cart: ${cartCount}`}
+                className={`
+                  ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5
+                  text-xs font-bold rounded-full align-middle
+                  ${dark ? 'bg-pink-300 text-pink-900' : 'bg-pink-600 text-white'}
+                  animate-pulse
+                `}
+              >
+                {cartCount}
+              </span>
+            )}
+          </NavLink>
 
           {isAuthenticated() ? (
             <>
-              {/* User Links */}
-              {user.roles.includes("USER") && (
-                <>
-                  <NavLink 
-                    to="/user/dashboard"
-                    className={({ isActive }) =>
-                      `px-3 py-2 rounded-full transition-all duration-300 ${
-                        isActive 
-                          ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
-                          : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
-                      }`
-                    }
-                  >
-                    Dashboard
-                  </NavLink>
-                  <NavLink
-                    to="/user/cart"
-                    className={({ isActive }) =>
-                      `relative px-3 py-2 rounded-full transition-all duration-300 ${
-                        isActive 
-                          ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
-                          : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
-                      }`
-                    }
-                  >
-                    <span>Cart</span>
-                    {cartCount > 0 && (
-                      <span
-                        aria-label={`Items in cart: ${cartCount}`}
-                        className={`
-                          ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5
-                          text-xs font-bold rounded-full align-middle
-                          ${dark ? 'bg-pink-300 text-pink-900' : 'bg-pink-600 text-white'}
-                          animate-pulse
-                        `}
-                      >
-                        {cartCount}
-                      </span>
-                    )}
-                  </NavLink>
-                  <NavLink 
-                    to="/user/orders"
-                    className={({ isActive }) =>
-                      `px-3 py-2 rounded-full transition-all duration-300 ${
-                        isActive 
-                          ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
-                          : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
-                      }`
-                    }
-                  >
-                    Orders
-                  </NavLink>
-                  
-                  {/* Theme Toggle Pill */}
-                  <button
-                    type="button"
-                    onClick={toggle}
-                    className={`
-                      relative w-16 h-7 rounded-full 
-                      transition-all duration-500 ease-in-out
-                      ${dark ? 'bg-gray-600 shadow-inner' : 'bg-pink-100 shadow'} 
-                      flex items-center px-1 ml-2
-                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400
-                      hover:shadow-lg
-                    `}
-                    title="Toggle theme"
-                  >
-                    <span className={`
-                      absolute h-6 w-6 rounded-full shadow transform transition-all duration-500 ease-in-out
-                      ${dark 
-                        ? 'translate-x-9 bg-pink-300' 
-                        : 'translate-x-0 bg-white'
-                      }
-                    `}></span>
-                    <span className="flex justify-between w-full text-[10px] font-semibold z-10 select-none">
-                      <span className={`transition-opacity duration-300 ${dark ? 'opacity-30' : 'opacity-100'}`}>🌞</span>
-                      <span className={`transition-opacity duration-300 ${dark ? 'opacity-100' : 'opacity-30'}`}>🌙</span>
-                    </span>
-                  </button>
-                </>
-              )}
-
-              {/* Florist Links */}
-              {user.roles.includes("FLORIST") && (
-                <NavLink 
-                  to="/florist/dashboard"
-                  className={({ isActive }) =>
-                    `px-3 py-2 rounded-full transition-all duration-300 ${
-                      isActive 
-                        ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
-                        : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
-                    }`
-                  }
-                >
-                  Florist Dashboard
-                </NavLink>
-              )}
-
-              {/* Admin Links */}
+              {/* Role-based Dashboard Links - Show highest priority role only */}
               {user.roles.includes("ADMIN") && (
                 <NavLink 
                   to="/admin/dashboard"
@@ -204,6 +133,78 @@ export default function Navbar() {
                   Admin Dashboard
                 </NavLink>
               )}
+              
+              {/* Show Florist Dashboard if user has FLORIST role (even if they also have USER role) */}
+              {user.roles.includes("FLORIST") && !user.roles.includes("ADMIN") && (
+                <NavLink 
+                  to="/florist/dashboard"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-full transition-all duration-300 ${
+                      isActive 
+                        ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
+                        : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
+                    }`
+                  }
+                >
+                  Florist Dashboard
+                </NavLink>
+              )}
+              
+              {/* Show User Dashboard for florists AND regular users (not admins) */}
+              {!user.roles.includes("ADMIN") && user.roles.includes("USER") && (
+                <NavLink 
+                  to="/user/dashboard"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-full transition-all duration-300 ${
+                      isActive 
+                        ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
+                        : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
+                    }`
+                  }
+                >
+                    Dashboard
+                  </NavLink>
+              )}
+              
+              <NavLink 
+                to="/user/orders"
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded-full transition-all duration-300 ${
+                    isActive 
+                      ? `font-semibold ${dark ? 'bg-pink-800 text-pink-100' : 'bg-pink-100 text-pink-800'}` 
+                      : `hover:bg-opacity-30 ${dark ? 'hover:bg-pink-900 text-gray-100' : 'hover:bg-pink-50 text-gray-700'}`
+                  }`
+                }
+              >
+                Orders
+              </NavLink>
+              
+              {/* Theme Toggle Pill */}
+              <button
+                type="button"
+                onClick={toggle}
+                className={`
+                  relative w-16 h-7 rounded-full 
+                  transition-all duration-500 ease-in-out
+                  ${dark ? 'bg-gray-600 shadow-inner' : 'bg-pink-100 shadow'} 
+                  flex items-center px-1 ml-2
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400
+                  hover:shadow-lg
+                `}
+                title="Toggle theme"
+              >
+                <span className={`
+                  absolute h-6 w-6 rounded-full shadow transform transition-all duration-500 ease-in-out
+                  ${dark 
+                    ? 'translate-x-9 bg-pink-300' 
+                    : 'translate-x-0 bg-white'
+                  }
+                `}></span>
+                <span className="flex justify-between w-full text-[10px] font-semibold z-10 select-none">
+                  <span className={`transition-opacity duration-300 ${dark ? 'opacity-30' : 'opacity-100'}`}>🌞</span>
+                  <span className={`transition-opacity duration-300 ${dark ? 'opacity-100' : 'opacity-30'}`}>🌙</span>
+                </span>
+              </button>
 
               <button
                 onClick={handleLogout}
@@ -247,7 +248,7 @@ export default function Navbar() {
                 Register
               </NavLink>
               
-              {/* Theme Toggle Pill */}
+              {/* Theme Toggle for non-authenticated users */}
               <button
                 type="button"
                 onClick={toggle}

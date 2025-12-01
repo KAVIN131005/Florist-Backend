@@ -22,12 +22,14 @@ public class CartService {
 
   @Transactional
   public Cart addItem(CartItemDTO dto) {
-    if (dto.grams() % 100 != 0) throw new RuntimeException("Grams must be in 100g steps");
+    // Use the DTO's getGrams() method which handles both grams and quantity conversion
+    int grams = dto.getGrams();
+    if (grams % 100 != 0) throw new RuntimeException("Grams must be in 100g steps");
     User u = userService.getCurrentUser();
     Cart cart = getOrCreateCart(u);
     Product p = productRepo.findById(dto.productId()).orElseThrow();
     CartItem item = CartItem.builder()
-        .cart(cart).product(p).grams(dto.grams()).pricePer100gAtAdd(p.getPricePer100g()).build();
+        .cart(cart).product(p).grams(grams).pricePer100gAtAdd(p.getPricePer100g()).build();
     cart.getItems().add(item);
     cartRepo.save(cart);
     return cart;
@@ -60,5 +62,10 @@ public class CartService {
   @Transactional
   public void clearCart(User u) {
     cartRepo.findByUser(u).ifPresent(c -> { c.getItems().clear(); cartRepo.save(c); });
+  }
+
+  @Transactional
+  public void clearMyCart() {
+    clearCart(userService.getCurrentUser());
   }
 }

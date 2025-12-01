@@ -48,7 +48,7 @@ export default function ProductGrid({ products: propProducts = null, featured = 
     // Fetch categories for filtering
     const fetchCategories = async () => {
       try {
-        const res = await api.get("/api/categories");
+        const res = await api.get("/categories");
         setCategories(res.data || []);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -304,7 +304,7 @@ export default function ProductGrid({ products: propProducts = null, featured = 
       )}
       
       {/* Add animation keyframe */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
