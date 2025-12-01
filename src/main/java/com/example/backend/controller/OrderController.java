@@ -70,6 +70,17 @@ public class OrderController {
     }
   }
 
+  // Auto-advance status for demo purposes
+  @PutMapping("/{id}/advance-status")
+  public ResponseEntity<OrderResponseDTO> advanceOrderStatus(@PathVariable Long id) {
+    try {
+      OrderResponseDTO updatedOrder = orderService.advanceOrderStatus(id);
+      return ResponseEntity.ok(updatedOrder);
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
   // Admin: Get all orders
   @GetMapping("/admin/all")
   @PreAuthorize("hasRole('ADMIN')")

@@ -51,7 +51,11 @@ export default function ProductGrid({ products: propProducts = null, featured = 
         const res = await api.get("/categories");
         setCategories(res.data || []);
       } catch (err) {
-        console.error("Failed to fetch categories:", err);
+        if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+          console.log('Categories API unavailable - running in demo mode');
+        } else {
+          console.error("Failed to fetch categories:", err);
+        }
       }
     };
     fetchCategories();

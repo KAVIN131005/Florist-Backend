@@ -22,6 +22,10 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
     // eslint-disable-next-line no-unused-vars
     } catch (error) {
+      // Silently handle connection errors (demo mode)
+      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+        console.log('API unavailable - running in demo mode');
+      }
       setUser(null);
       clearAuth(); // remove invalid token
     } finally {

@@ -30,7 +30,11 @@ export default function Shop() {
         const productData = data.content || data || [];
         setProducts(Array.isArray(productData) ? productData : []);
       } catch (err) {
-        console.error("Error fetching products:", err);
+        if (err.message.includes('Failed to fetch') || err.message.includes('ERR_CONNECTION_REFUSED')) {
+          console.log('Products API unavailable - running in demo mode');
+        } else {
+          console.error("Error fetching products:", err);
+        }
         setProducts([]); // Set empty array on error
       } finally {
         setLoading(false);
@@ -58,7 +62,10 @@ export default function Shop() {
         cats.forEach(c => { map[c.name] = c.visible !== false; });
         setVisibleCategories(map);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err.message && (err.message.includes('Failed to fetch') || err.message.includes('ERR_CONNECTION_REFUSED'))) {
+          console.log('Categories API unavailable - running in demo mode');
+        }
         // Fallback: local map if categories not accessible
         try {
           const localMap = JSON.parse(localStorage.getItem("localCategoryVisibility") || "{}");

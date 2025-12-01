@@ -268,6 +268,37 @@ public class OrderService {
         }
     }
 
+    @Transactional
+    public OrderResponseDTO advanceOrderStatus(Long orderId) {
+        Order order = orderRepo.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        // Define the status progression: CREATED -> PAID -> SHIPPED -> DELIVERED
+        Order.Status currentStatus = order.getStatus();
+        Order.Status nextStatus;
+        
+        switch (currentStatus) {
+            case CREATED:
+                nextStatus = Order.Status.PAID;
+                break;
+            case PAID:
+                nextStatus = Order.Status.SHIPPED;
+                break;
+            case SHIPPED:
+                nextStatus = Order.Status.DELIVERED;
+                break;
+            case DELIVERED:
+                // Already at final status, don't change
+                return toDTOWithPaymentInfo(order);
+            default:
+                throw new RuntimeException("Cannot advance from status: " + currentStatus);
+        }
+        
+        order.setStatus(nextStatus);
+        orderRepo.save(order);
+        return toDTOWithPaymentInfo(order);
+    }
+
     public List<OrderResponseDTO> getAllOrdersAsDTO() {
         List<Order> orders = entityManager.createQuery(
             "SELECT DISTINCT o FROM Order o " +

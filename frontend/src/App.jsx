@@ -25,6 +25,7 @@ import Cart from "./components/user/Cart";
 import Checkout from "./components/user/Checkout";
 import Orders from "./components/user/Orders";
 import OrderDetailsLocal from "./components/user/OrderDetailsLocal";
+import OrderTracking from "./components/user/OrderTracking";
 import BecomeFlorist from "./components/user/BecomeFlorist";
 
 // Florist
@@ -59,7 +60,7 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
           {/* Public My Orders (no forced login) */}
           <Route path="/user/orders" element={<Orders />} />
-          <Route path="/orders/:id" element={<OrderDetailsLocal />} />
+          <Route path="/orders/:id" element={<OrderTracking />} />
           
           {/* Cart should be accessible to everyone */}
           <Route path="/user/cart" element={<Cart />} />

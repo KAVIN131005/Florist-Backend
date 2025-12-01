@@ -17,6 +17,17 @@ api.interceptors.request.use(cfg => {
 api.interceptors.response.use(
   res => res,
   err => {
+    // Handle network errors (connection refused, etc.) silently for demo mode
+    if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+      // Don't spam console with network errors in demo mode
+      const demoError = new Error(err.message);
+      demoError.code = err.code;
+      demoError.config = err.config;
+      demoError.response = err.response;
+      demoError.isNetworkError = true;
+      return Promise.reject(demoError);
+    }
+    
     // Only clear auth on 401 if we actually sent a token
     if (err.response?.status === 401 && err.config.headers.Authorization) {
       clearAuth();
