@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { ThemeContext } from "../../context/themeContextDefinition";
 
 export default function AdminDashboard() {
-  const { dark, toggle } = useContext(ThemeContext);
+  const { dark } = useContext(ThemeContext);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
@@ -325,300 +325,444 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className={`p-6 space-y-8 transition-colors duration-300 ${dark ? 'text-white' : 'text-gray-800'}`}>
-      {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className={`text-3xl md:text-4xl font-bold relative
-            ${dark ? 'text-pink-200' : 'text-pink-600'}
-            after:content-[""] after:absolute after:w-16 after:h-1 
-            after:bg-pink-400 after:bottom-[-8px] after:left-0
-            after:rounded-full
-          `}>Admin Dashboard</h1>
-          <p className={`mt-3 ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Platform management and insights
+    <div className={`min-h-screen py-8 px-4 ${dark ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'}`}>
+      {/* Enhanced Header Section */}
+      <div className="max-w-7xl mx-auto mb-10">
+        <div className="text-center mb-8">
+          <div className="flex justify-center items-center gap-6 mb-6">
+            <div className="relative">
+              <div className="text-6xl animate-bounce transform hover:scale-110 transition-transform duration-300">⚡</div>
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full animate-ping"></div>
+            </div>
+            <div className="text-6xl animate-pulse transform hover:scale-110 transition-transform duration-300">🏢</div>
+            <div className="relative">
+              <div className="text-6xl animate-pulse transform hover:scale-110 transition-transform duration-300">📊</div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full animate-bounce"></div>
+            </div>
+          </div>
+          
+          <div className="relative mb-6">
+            <h1 className={`text-4xl md:text-5xl font-bold ${dark ? 'text-white' : 'text-gray-900'} font-serif mb-3 relative`}>
+              <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-gradient-x">
+                Admin Dashboard
+              </span>
+            </h1>
+            <div className={`w-32 h-1 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-pulse`}></div>
+          </div>
+          
+          <p className={`${dark ? 'text-gray-300' : 'text-gray-600'} text-xl mb-6 font-medium`}>
+            🎯 Complete platform management and analytics center
           </p>
-        </div>
-        
-        {/* Theme Toggle Pill */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={toggle}
-            className={`
-              relative w-16 h-7 rounded-full 
-              transition-all duration-500 ease-in-out
-              ${dark ? 'bg-gray-600 shadow-inner' : 'bg-pink-100 shadow'} 
-              flex items-center px-1
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400
-              hover:shadow-lg
-            `}
-            title="Toggle theme"
-            aria-label="Toggle dark mode"
-          >
-            <span className={`
-              absolute h-5 w-5 rounded-full shadow transform transition-all duration-500 ease-in-out
-              ${dark 
-                ? 'translate-x-9 bg-pink-300' 
-                : 'translate-x-0 bg-white'
-              }
-            `}></span>
-            <span className="flex justify-between w-full text-[10px] font-semibold z-10 select-none">
-              <span className={`transition-opacity duration-300 ${dark ? 'opacity-30' : 'opacity-100'}`}>🌞</span>
-              <span className={`transition-opacity duration-300 ${dark ? 'opacity-100' : 'opacity-30'}`}>🌙</span>
-            </span>
-          </button>
-        </div>
-      </header>
+          
 
-      {/* Admin Quick Nav */}
-      <div className={`
-        flex flex-wrap gap-2 md:gap-4 p-4 md:p-6 rounded-xl
-        ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white shadow-md'}
-      `}>
-        <Link 
-          to="/admin/florist-applications" 
-          className={`
-            px-5 py-2 rounded-full transition-all duration-300 font-medium
-            ${dark ? 'bg-blue-800 hover:bg-blue-700 text-white' : 'bg-blue-100 hover:bg-blue-200 text-blue-800'}
-            shadow hover:shadow-md transform hover:scale-105
-          `}
-        >
-          Florist Applications
-        </Link>
-        <Link 
-          to="/admin/all-florists" 
-          className={`
-            px-5 py-2 rounded-full transition-all duration-300 font-medium
-            ${dark ? 'bg-green-800 hover:bg-green-700 text-white' : 'bg-green-100 hover:bg-green-200 text-green-800'}
-            shadow hover:shadow-md transform hover:scale-105
-          `}
-        >
-          Manage Florists
-        </Link>
-        <button 
-          onClick={() => setShowOrderingUsers(true)} 
-          className={`
-            px-5 py-2 rounded-full transition-all duration-300 font-medium
-            ${dark ? 'bg-purple-800 hover:bg-purple-700 text-white' : 'bg-purple-100 hover:bg-purple-200 text-purple-800'}
-            shadow hover:shadow-md transform hover:scale-105
-          `}
-        >
-          User Orders
-        </button>
+          
+          {/* Admin Actions Quick Bar */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <Link 
+              to="/admin/florist-applications" 
+              className={`px-8 py-4 rounded-3xl font-bold text-white transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl
+                ${dark ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600'}`}
+            >
+              <span className="flex items-center gap-3">
+                📝 Florist Applications
+              </span>
+            </Link>
+            
+            <Link 
+              to="/admin/all-florists" 
+              className={`px-8 py-4 rounded-3xl font-bold text-white transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl
+                ${dark ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'}`}
+            >
+              <span className="flex items-center gap-3">
+                🌸 Manage Florists
+              </span>
+            </Link>
+            
+            <button 
+              onClick={() => setShowOrderingUsers(true)} 
+              className={`px-8 py-4 rounded-3xl font-bold text-white transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl
+                ${dark ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'}`}
+            >
+              <span className="flex items-center gap-3">
+                📦 User Orders
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className={`
-          p-6 rounded-xl shadow-lg text-center
-          transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl
-          ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
-        `}>
-          <div className={`text-sm mb-2 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Users</div>
-          <div className={`text-2xl md:text-3xl font-bold ${dark ? 'text-indigo-300' : 'text-indigo-600'}`}>{stats?.totalUsers ?? 0}</div>
-          <div className={`mt-2 text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Registered accounts</div>
-        </div>
-        
-        <div className={`
-          p-6 rounded-xl shadow-lg text-center
-          transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl
-          ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
-        `}>
-          <div className={`text-sm mb-2 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Florists</div>
-          <div className={`text-2xl md:text-3xl font-bold ${dark ? 'text-pink-300' : 'text-pink-600'}`}>{stats?.totalFlorists ?? 0}</div>
-          <div className={`mt-2 text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Active vendors</div>
-        </div>
-        
-        <div className={`
-          p-6 rounded-xl shadow-lg text-center
-          transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl
-          ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
-        `}>
-          <div className={`text-sm mb-2 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Admin (20%) Earnings</div>
-          <div className={`text-2xl md:text-3xl font-bold ${dark ? 'text-green-300' : 'text-green-600'}`}>
-            ₹{revenueSplit.admin.toFixed(2)}
+      {/* Enhanced Stats Grid */}
+      <div className="max-w-7xl mx-auto mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          {/* Platform Earnings Card */}
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden hover-lift relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500 animate-gradient-x"></div>
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className={`w-16 h-16 rounded-2xl ${dark ? 'bg-gradient-to-br from-green-600 to-emerald-600' : 'bg-gradient-to-br from-green-500 to-emerald-500'} flex items-center justify-center shadow-xl animate-pulse`}>
+                  <span className="text-3xl filter drop-shadow-lg">💰</span>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'} animate-bounce`}>
+                  ADMIN
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className={`text-sm font-bold ${dark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>Admin Earnings (20%)</h3>
+                <p className={`text-3xl font-bold ${dark ? 'text-green-400' : 'text-green-600'} animate-pulse-glow`}>
+                  ₹{revenueSplit.admin.toFixed(2)}
+                </p>
+                <p className={`text-sm ${dark ? 'text-green-400' : 'text-green-600'}`}>
+                  📈 From {revenueSplit.paidCount} paid orders
+                </p>
+              </div>
+            </div>
           </div>
-          <div className={`mt-2 text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
-            From {revenueSplit.paidCount} paid orders
-          </div>
-        </div>
-        
-        <div className={`
-          p-6 rounded-xl shadow-lg text-center
-          transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl
-          ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
-        `}>
-          <div className={`text-sm mb-2 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Florist (80%) Earnings</div>
-          <div className={`text-2xl md:text-3xl font-bold ${dark ? 'text-green-300' : 'text-green-600'}`}>
-            ₹{revenueSplit.florist.toFixed(2)}
-          </div>
-          <div className={`mt-2 text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
-            Gross ₹{revenueSplit.gross.toFixed(2)}
-          </div>
-        </div>
-      </section>
 
-      {/* Quick Links */}
-      <section className="grid grid-cols-1 gap-4">
-        <Link 
-          to="/admin/florist-applications" 
-          className={`
-            py-5 rounded-xl text-center shadow-lg transition-all duration-300
-            transform hover:scale-[1.01] hover:shadow-xl
-            ${dark 
-              ? 'bg-gradient-to-r from-indigo-800 to-purple-800 text-white hover:from-indigo-700 hover:to-purple-700' 
-              : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600'
-            }
-          `}
+          {/* Total Users Card */}
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden hover-lift relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 animate-gradient-x"></div>
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className={`w-16 h-16 rounded-2xl ${dark ? 'bg-gradient-to-br from-blue-600 to-indigo-600' : 'bg-gradient-to-br from-blue-500 to-indigo-500'} flex items-center justify-center shadow-xl animate-pulse`}>
+                  <span className="text-3xl filter drop-shadow-lg">👥</span>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'} animate-bounce`}>
+                  USERS
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className={`text-sm font-bold ${dark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>Total Users</h3>
+                <p className={`text-3xl font-bold ${dark ? 'text-blue-400' : 'text-blue-600'} animate-pulse-glow`}>
+                  {stats?.totalUsers?.toLocaleString() || '0'}
+                </p>
+                <p className={`text-sm ${dark ? 'text-blue-400' : 'text-blue-600'}`}>
+                  👤 Registered customers
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Orders Card */}
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden hover-lift relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient-x"></div>
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className={`w-16 h-16 rounded-2xl ${dark ? 'bg-gradient-to-br from-purple-600 to-pink-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'} flex items-center justify-center shadow-xl animate-pulse`}>
+                  <span className="text-3xl filter drop-shadow-lg">📦</span>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-700'} animate-bounce`}>
+                  ORDERS
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className={`text-sm font-bold ${dark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>Total Orders</h3>
+                <p className={`text-3xl font-bold ${dark ? 'text-purple-400' : 'text-purple-600'} animate-pulse-glow`}>
+                  {stats?.totalOrders?.toLocaleString() || orders.length.toLocaleString()}
+                </p>
+                <p className={`text-sm ${dark ? 'text-purple-400' : 'text-purple-600'}`}>
+                  🛒 Total transactions
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Florists Card */}
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden hover-lift relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-rose-500 animate-gradient-x"></div>
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className={`w-16 h-16 rounded-2xl ${dark ? 'bg-gradient-to-br from-pink-600 to-rose-600' : 'bg-gradient-to-br from-pink-500 to-rose-500'} flex items-center justify-center shadow-xl animate-pulse`}>
+                  <span className="text-3xl filter drop-shadow-lg">🌸</span>
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-pink-900 text-pink-300' : 'bg-pink-100 text-pink-700'} animate-bounce`}>
+                  FLORISTS
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className={`text-sm font-bold ${dark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>Active Florists</h3>
+                <p className={`text-3xl font-bold ${dark ? 'text-pink-400' : 'text-pink-600'} animate-pulse-glow`}>
+                  {stats?.totalFlorists?.toLocaleString() || '0'}
+                </p>
+                <p className={`text-sm ${dark ? 'text-pink-400' : 'text-pink-600'}`}>
+                  🏪 Vendor partners
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Recent Activity & Revenue Split Section */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Orders Overview */}
+        <div className="lg:col-span-2">
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient-x"></div>
+            
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className={`text-2xl font-bold ${dark ? 'text-white' : 'text-gray-900'} mb-2`}>
+                    📦 Recent Orders
+                  </h3>
+                  <p className={`${dark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
+                    Latest platform transactions and activity
+                  </p>
+                </div>
+                <div className={`px-4 py-2 rounded-2xl ${dark ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'} text-sm font-bold animate-pulse`}>
+                  {recentOrders.length} Orders
+                </div>
+              </div>
+
+              {ordersLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="relative">
+                    <div className={`w-16 h-16 rounded-full border-4 border-t-transparent animate-spin ${dark ? 'border-blue-400' : 'border-blue-500'}`}></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-2xl animate-ping">📋</span>
+                    </div>
+                  </div>
+                </div>
+              ) : recentOrders.length === 0 ? (
+                <div className={`text-center p-12 rounded-3xl ${dark ? 'bg-gray-700 border border-gray-600' : 'bg-gray-50 border border-gray-100'}`}>
+                  <div className="text-6xl mb-4 animate-bounce">📪</div>
+                  <h4 className={`text-xl font-bold ${dark ? 'text-gray-300' : 'text-gray-600'} mb-2`}>
+                    No Orders Yet
+                  </h4>
+                  <p className={`${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Orders will appear here once customers start purchasing
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
+                  {recentOrders.slice(0, 10).map((order, index) => (
+                    <div 
+                      key={order.id || order._id}
+                      className={`
+                        p-6 rounded-2xl border transition-all duration-300 hover-lift
+                        ${dark ? 'bg-gray-700 border-gray-600 hover:bg-gray-650' : 'bg-gray-50 border-gray-100 hover:bg-white hover:shadow-md'}
+                        transform hover:scale-[1.01]
+                      `}
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${dark ? 'bg-blue-600' : 'bg-blue-100'} animate-pulse`}>
+                              <span className="text-sm font-bold">#{index + 1}</span>
+                            </div>
+                            <div>
+                              <p className={`font-mono text-xs ${dark ? 'text-gray-300' : 'text-gray-600'} mb-1`}>
+                                ID: {(order.id || order._id)?.toString().slice(-8)}
+                              </p>
+                              <p className={`font-semibold ${dark ? 'text-white' : 'text-gray-900'}`}>
+                                {order.user?.name || order.user?.fullName || 'Customer'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-wrap items-center gap-3">
+                            <span className={`
+                              px-3 py-1 rounded-full text-xs font-bold inline-flex items-center gap-2
+                              ${order.status === 'DELIVERED' 
+                                ? 'bg-green-100 text-green-700 border border-green-200' 
+                                : order.status === 'FAILED' 
+                                  ? 'bg-red-100 text-red-700 border border-red-200' 
+                                  : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
+                              }
+                            `}>
+                              {order.status === 'DELIVERED' && '✅'}
+                              {order.status === 'FAILED' && '❌'}
+                              {!['DELIVERED', 'FAILED'].includes(order.status) && '🚚'}
+                              {order.status}
+                            </span>
+                            
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                              ₹{Number(order.total || 0).toFixed(2)}
+                            </span>
+                            
+                            <span className={`text-xs ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+                              📅 {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Date N/A'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Revenue Split Card */}
+        <div className="space-y-6">
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-green-500 animate-gradient-x"></div>
+            
+            <div className="p-8">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-4 animate-bounce">💎</div>
+                <h3 className={`text-xl font-bold ${dark ? 'text-white' : 'text-gray-900'} mb-2`}>
+                  Revenue Breakdown
+                </h3>
+                <p className={`${dark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>
+                  Total earnings distribution
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Gross Revenue */}
+                <div className={`p-6 rounded-2xl ${dark ? 'bg-gray-700 border border-gray-600' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100'}`}>
+                  <div className="text-center">
+                    <div className="text-2xl mb-2">💰</div>
+                    <p className={`text-sm font-semibold ${dark ? 'text-gray-300' : 'text-gray-600'} mb-1`}>
+                      Gross Revenue
+                    </p>
+                    <p className={`text-2xl font-bold ${dark ? 'text-blue-400' : 'text-blue-600'}`}>
+                      ₹{revenueSplit.gross.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Admin Share */}
+                <div className={`p-6 rounded-2xl ${dark ? 'bg-gray-700 border border-gray-600' : 'bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100'}`}>
+                  <div className="text-center">
+                    <div className="text-2xl mb-2">🏛️</div>
+                    <p className={`text-sm font-semibold ${dark ? 'text-gray-300' : 'text-gray-600'} mb-1`}>
+                      Platform Share (20%)
+                    </p>
+                    <p className={`text-xl font-bold ${dark ? 'text-green-400' : 'text-green-600'}`}>
+                      ₹{revenueSplit.admin.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Florist Share */}
+                <div className={`p-6 rounded-2xl ${dark ? 'bg-gray-700 border border-gray-600' : 'bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100'}`}>
+                  <div className="text-center">
+                    <div className="text-2xl mb-2">🌸</div>
+                    <p className={`text-sm font-semibold ${dark ? 'text-gray-300' : 'text-gray-600'} mb-1`}>
+                      Florists Share (80%)
+                    </p>
+                    <p className={`text-xl font-bold ${dark ? 'text-purple-400' : 'text-purple-600'}`}>
+                      ₹{revenueSplit.florist.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Order Count */}
+                <div className={`p-4 rounded-2xl ${dark ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-50 text-yellow-700'} border ${dark ? 'border-yellow-700' : 'border-yellow-200'}`}>
+                  <div className="text-center">
+                    <p className="text-sm font-semibold mb-1">Paid Orders</p>
+                    <p className="text-lg font-bold">{revenueSplit.paidCount} orders</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Top Orders Preview */}
+          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden relative`}>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-orange-500 animate-gradient-x"></div>
+            
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <div className="text-3xl mb-2">🏆</div>
+                <h4 className={`text-lg font-bold ${dark ? 'text-white' : 'text-gray-900'}`}>
+                  Top Orders
+                </h4>
+              </div>
+
+              {ordersLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-2 animate-spin">⏳</div>
+                  <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Loading top orders...</p>
+                </div>
+              ) : topOrders.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-2 animate-pulse">📊</div>
+                  <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>No high-value orders yet</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {topOrders.slice(0, 5).map((order, index) => (
+                    <div 
+                      key={order.id || order._id}
+                      className={`
+                        p-4 rounded-2xl border transition-all duration-300 hover-lift
+                        ${dark ? 'bg-gray-700 border-gray-600' : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-100'}
+                      `}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${dark ? 'bg-yellow-600 text-white' : 'bg-yellow-500 text-white'}`}>
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className={`font-mono text-xs ${dark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>
+                              {(order.id || order._id || '').toString().slice(-6)}
+                            </p>
+                            <p className={`text-sm font-semibold ${dark ? 'text-white' : 'text-gray-900'}`}>
+                              {(order.user?.name || order.user?.fullName || 'Customer').slice(0, 12)}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="text-right">
+                          <p className={`text-lg font-bold ${dark ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                            ₹{Number(order.total || 0).toFixed(0)}
+                          </p>
+                          <span className={`
+                            text-xs px-2 py-1 rounded-full font-medium
+                            ${order.status === 'DELIVERED' 
+                              ? 'bg-green-100 text-green-700' 
+                              : order.status === 'FAILED' 
+                                ? 'bg-red-100 text-red-700' 
+                                : 'bg-gray-100 text-gray-700'
+                            }
+                          `}>
+                            {order.status === 'DELIVERED' && '✅'}
+                            {order.status === 'FAILED' && '❌'}
+                            {!['DELIVERED', 'FAILED'].includes(order.status) && '⏳'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* User Ordering Modal */}
+      {showOrderingUsers && (
+        <Modal
+          onClose={() => setShowOrderingUsers(false)}
+          className={`max-w-6xl ${dark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}
         >
-          <span className="text-lg font-semibold">Review Florist Applications</span>
-          <span className="block mt-1 text-sm opacity-80">Approve or reject new florist registrations</span>
-        </Link>
-      </section>
-
-      {/* Orders overview */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className={`
-          lg:col-span-2 rounded-xl shadow-lg p-5 
-          ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
-        `}>
-          <h3 className={`text-lg font-semibold mb-4 ${dark ? 'text-pink-300' : 'text-pink-600'}`}>Recent Orders</h3>
-          {ordersLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <div className={`
-                w-10 h-10 border-4 rounded-full animate-spin 
-                ${dark ? 'border-pink-300 border-t-transparent' : 'border-pink-500 border-t-transparent'}
-              `}></div>
+          <div className="p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold mb-2">👥 User Order Analytics</h2>
+                <p className={`${dark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  Comprehensive user ordering behavior and statistics
+                </p>
+              </div>
+              <button
+                onClick={() => setShowOrderingUsers(false)}
+                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${dark ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}
+              >
+                ✕
+              </button>
             </div>
-          ) : recentOrders.length === 0 ? (
-            <div className={`
-              text-center p-8 rounded-lg 
-              ${dark ? 'text-gray-400 bg-gray-700/30' : 'text-gray-500 bg-gray-50'}
-            `}>
-              No orders yet.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className={`w-full text-sm ${dark ? 'text-gray-300' : 'text-gray-700'}`}>
-                <thead>
-                  <tr className={`text-left border-b ${dark ? 'border-gray-700' : 'border-gray-200'}`}>
-                    <th className="py-3 px-4 font-semibold">Order ID</th>
-                    <th className="py-3 px-4 font-semibold">User</th>
-                    <th className="py-3 px-4 font-semibold">Status</th>
-                    <th className="py-3 px-4 font-semibold">Total (₹)</th>
-                    <th className="py-3 px-4 font-semibold">Placed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders.slice(0, 10).map(o => (
-                    <tr 
-                      key={o.id || o._id} 
-                      className={`
-                        border-b last:border-0 hover:bg-opacity-30
-                        ${dark 
-                          ? 'border-gray-700 hover:bg-gray-700' 
-                          : 'border-gray-100 hover:bg-pink-50'
-                        }
-                        transition-colors duration-150
-                      `}
-                    >
-                      <td className="py-3 px-4 font-mono text-xs">{o.id || o._id}</td>
-                      <td className="py-3 px-4">{o.user?.name || o.user?.fullName || o.userId || '-'}</td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium inline-block
-                          ${o.status === 'DELIVERED' 
-                            ? dark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700' 
-                            : o.status === 'FAILED' 
-                              ? dark ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-600' 
-                              : dark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'
-                          }`}>
-                          {o.status}
-                        </span>
-                      </td>
-                      <td className={`py-3 px-4 font-medium ${dark ? 'text-green-300' : 'text-green-600'}`}>
-                        ₹{Number(o.total || 0).toFixed(2)}
-                      </td>
-                      <td className={`py-3 px-4 text-xs ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        {o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-        
-        <div className={`
-          rounded-xl shadow-lg p-5 
-          ${dark ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
-        `}>
-          <h3 className={`text-lg font-semibold mb-4 ${dark ? 'text-pink-300' : 'text-pink-600'}`}>Top Orders (by value)</h3>
-          {ordersLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <div className={`
-                w-8 h-8 border-3 rounded-full animate-spin 
-                ${dark ? 'border-pink-300 border-t-transparent' : 'border-pink-500 border-t-transparent'}
-              `}></div>
-            </div>
-          ) : topOrders.length === 0 ? (
-            <div className={`
-              text-center p-6 rounded-lg 
-              ${dark ? 'text-gray-400 bg-gray-700/30' : 'text-gray-500 bg-gray-50'}
-            `}>
-              No data available.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className={`w-full text-sm ${dark ? 'text-gray-300' : 'text-gray-700'}`}>
-                <thead>
-                  <tr className={`text-left border-b ${dark ? 'border-gray-700' : 'border-gray-200'}`}>
-                    <th className="py-3 px-3 font-semibold">Order</th>
-                    <th className="py-3 px-3 font-semibold">User</th>
-                    <th className="py-3 px-3 font-semibold">Total</th>
-                    <th className="py-3 px-3 font-semibold">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topOrders.map(o => (
-                    <tr 
-                      key={o.id || o._id} 
-                      className={`
-                        border-b last:border-0 hover:bg-opacity-30
-                        ${dark 
-                          ? 'border-gray-700 hover:bg-gray-700' 
-                          : 'border-gray-100 hover:bg-pink-50'
-                        }
-                        transition-colors duration-150
-                      `}
-                    >
-                      <td className="py-2 px-3 font-mono">{(o.id || o._id || '').toString().slice(-8)}</td>
-                      <td className="py-2 px-3 truncate max-w-[80px]" title={o.user?.name || o.user?.fullName || o.userId}>
-                        {o.user?.name || o.user?.fullName || o.userId || '-'}
-                      </td>
-                      <td className={`py-2 px-3 font-semibold ${dark ? 'text-green-300' : 'text-green-600'}`}>
-                        ₹{Number(o.total||0).toFixed(2)}
-                      </td>
-                      <td className="py-2 px-3">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium inline-block
-                          ${o.status === 'DELIVERED' 
-                            ? dark ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700' 
-                            : o.status === 'FAILED' 
-                              ? dark ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-600' 
-                              : dark ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'
-                          }`}>
-                          {o.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </section>
+            
+            <AllOrders />
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

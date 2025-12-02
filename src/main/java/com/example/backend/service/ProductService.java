@@ -103,7 +103,7 @@ public class ProductService {
     public void delete(Long id) {
         User florist = userService.getCurrentUser();
         Product p = productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new com.example.backend.exception.ResourceNotFoundException("Product not found with id: " + id));
         if (!p.getFlorist().getId().equals(florist.getId())) {
             throw new RuntimeException("Not owner");
         }
@@ -113,7 +113,7 @@ public class ProductService {
     // GET PRODUCT BY ID
     public ProductResponseDTO getById(Long id) {
         Product p = productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new com.example.backend.exception.ResourceNotFoundException("Product not found with id: " + id));
         return toDTO(p);
     }
 
@@ -178,6 +178,23 @@ public class ProductService {
         } else {
             throw new RuntimeException("Category or newCategoryName must be provided");
         }
+    }
+
+    // UPDATE PRODUCT - PARTIAL UPDATE FOR PRICE AND QUANTITY ONLY
+    @Transactional
+    public ProductResponseDTO updatePriceAndQuantity(Long id, Double pricePer100g, Integer stockGrams) {
+        User florist = userService.getCurrentUser();
+        Product p = productRepo.findById(id)
+                .orElseThrow(() -> new com.example.backend.exception.ResourceNotFoundException("Product not found with id: " + id));
+
+        if (!p.getFlorist().getId().equals(florist.getId())) {
+            throw new RuntimeException("Not owner");
+        }
+
+        p.setPricePer100g(pricePer100g);
+        p.setStockGrams(stockGrams);
+
+        return toDTO(productRepo.save(p));
     }
 
     // HELPER: Convert Product to DTO

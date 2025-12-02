@@ -56,7 +56,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems) {
+    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems, OrderCreateDTO.DiscountInfo discount) {
         User user = userService.getCurrentUser();
         
         if (cartItems == null || cartItems.isEmpty()) {
@@ -101,6 +101,11 @@ public class OrderService {
             ));
         }
         
+        // Apply discount if provided
+        if (discount != null && discount.amount() != null && discount.amount() > 0) {
+            total = Math.max(0, total - discount.amount());
+        }
+        
         order.setTotalAmount(total);
         orderRepo.save(order);
         
@@ -112,6 +117,12 @@ public class OrderService {
             order.getTotalAmount(),
             dtoItems
         );
+    }
+
+    // Backward compatibility method
+    @Transactional
+    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems) {
+        return createFromCartItemsAsDTO(address, cartItems, null);
     }
 
     @Transactional

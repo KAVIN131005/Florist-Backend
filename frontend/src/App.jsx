@@ -70,8 +70,12 @@ function App() {
           <Route element={<ProtectedRoute requireRole="USER" />}>
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/user/profile" element={<Profile />} />
-            <Route path="/checkout" element={<Checkout />} /> {/* ✅ Checkout */}
             <Route path="/user/become-florist" element={<BecomeFlorist />} />
+          </Route>
+
+          {/* Checkout accessible to authenticated users (USER, ADMIN) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<Checkout />} />
           </Route>
 
           {/* Florist Protected Routes */}

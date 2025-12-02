@@ -44,16 +44,17 @@ const nextStatusMap = {
 
 const orderService = {
   // Backend expects just an address string - it gets cart items from the user's cart in the database
-  createFromCart: (address) => api.post("/orders", { address }).then(r => r.data),
+  createFromCart: (address, discount = null) => api.post("/orders", { address, discount }).then(r => r.data),
   
   // New method: Create order with cart items directly (bypasses database cart sync)
-  createFromCartItems: (address, cartItems) => {
+  createFromCartItems: (address, cartItems, discount = null) => {
     const payload = {
       address,
       cartItems: cartItems.map(item => ({
         productId: item.id,
         quantity: item.quantity
-      }))
+      })),
+      discount: discount
     };
     return api.post("/orders", payload).then(r => r.data);
   },

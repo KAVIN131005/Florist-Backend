@@ -9,6 +9,7 @@ export default function Cart() {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
   const [promo, setPromo] = useState("");
+  const [showPromoInput, setShowPromoInput] = useState(false);
   const applied = promo.trim().toUpperCase() === "7FOREVER"; // coupon 7Forever (case-insensitive)
   const { dark } = useContext(ThemeContext);
   
@@ -42,197 +43,418 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto text-center">
-        <div className={`${dark ? 'bg-gray-800 shadow-xl' : 'bg-white shadow-xl'} rounded-3xl p-6 sm:p-8 md:p-10 transition-all duration-300 transform hover:shadow-2xl`}>
-          <div className="text-6xl md:text-7xl mb-4 md:mb-6 animate-bounce">🛒</div>
-          <h1 className={`text-2xl sm:text-3xl font-bold mb-3 md:mb-4 ${dark ? 'text-white' : 'text-gray-800'} font-serif`}>Your Cart is Empty</h1>
-          <p className={`${dark ? 'text-gray-300' : 'text-gray-600'} mb-6 md:mb-8 max-w-md mx-auto`}>Looks like you haven't added any flowers to your cart yet. Explore our beautiful collection!</p>
-          <Link 
-            to="/shop" 
-            className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-6 py-3 rounded-full font-semibold hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-2"
-          >
-            Start Shopping <span className="text-xl">🌸</span>
-          </Link>
+      <div className={`min-h-screen py-12 px-4 ${dark ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 via-white to-purple-50'}`}>
+        <div className="max-w-2xl mx-auto">
+          <div className={`${dark ? 'bg-gray-800 shadow-2xl border border-gray-700' : 'bg-white shadow-2xl border border-gray-100'} rounded-3xl p-8 md:p-12 text-center transition-all duration-300 transform hover:scale-105`}>
+            {/* Animated Shopping Cart Icon */}
+            <div className="relative mb-8">
+              <div className="text-8xl md:text-9xl animate-bounce filter drop-shadow-lg">🛒</div>
+              <div className="absolute top-0 right-0 w-6 h-6 bg-pink-500 rounded-full animate-pulse"></div>
+            </div>
+            
+            <h1 className={`text-3xl md:text-4xl font-bold mb-4 ${dark ? 'text-white' : 'text-gray-800'} font-serif tracking-wide`}>
+              Your Cart is Empty
+            </h1>
+            
+            <p className={`${dark ? 'text-gray-300' : 'text-gray-600'} mb-8 text-lg max-w-md mx-auto leading-relaxed`}>
+              Discover our beautiful collection of fresh flowers and create your perfect arrangement
+            </p>
+            
+            <div className="space-y-4 mb-8">
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${dark ? 'bg-gray-700' : 'bg-pink-50'}`}>
+                <span className="text-2xl">🌸</span>
+                <span className={`${dark ? 'text-gray-300' : 'text-gray-700'} text-sm`}>Fresh flowers delivered daily</span>
+              </div>
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${dark ? 'bg-gray-700' : 'bg-purple-50'}`}>
+                <span className="text-2xl">🚚</span>
+                <span className={`${dark ? 'text-gray-300' : 'text-gray-700'} text-sm`}>Free delivery on orders over ₹500</span>
+              </div>
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${dark ? 'bg-gray-700' : 'bg-yellow-50'}`}>
+                <span className="text-2xl">💝</span>
+                <span className={`${dark ? 'text-gray-300' : 'text-gray-700'} text-sm`}>Perfect for any special occasion</span>
+              </div>
+            </div>
+            
+            <Link 
+              to="/shop" 
+              className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold text-white text-lg
+                ${dark 
+                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700' 
+                  : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
+                } 
+                transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1`}
+            >
+              <span className="text-2xl">🌺</span>
+              Start Shopping
+              <svg className="w-6 h-6 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
-        <h1 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${dark ? 'text-white' : 'text-gray-800'} font-serif relative
-          after:content-[''] after:absolute after:w-16 after:h-1 
-          after:bg-pink-400 after:bottom-[-8px] after:left-0
-          after:rounded-full`}
-        >
-          My Cart
-        </h1>
-        <button
-          onClick={() => { clearCart(); try { localStorage.removeItem("couponCode"); } catch { /* ignore */ } }}
-          className="text-red-600 hover:text-red-800 text-sm font-medium transition-colors duration-300 inline-flex items-center gap-1 hover:gap-2"
-        >
-          <span>Clear Cart</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
-      </div>
-      
-      <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} shadow-xl rounded-3xl overflow-hidden border`}>
-        <div className="p-4 sm:p-6 md:p-8">
-          {cart.map(item => (
-            <div key={item.id} className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4 ${dark ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-100 hover:bg-pink-50'} border-b last:border-b-0 transition-all duration-300`}>
-              <div className="relative group">
-                <div className={`w-20 h-20 md:w-24 md:h-24 overflow-hidden rounded-xl shadow-lg ${dark ? 'border-2 border-gray-600 bg-gray-700' : 'border border-pink-100 bg-white'} transition-all duration-300 flex items-center justify-center`}>
-                  <img
-                    src={item.imageUrl || "/images/placeholder.jpg"}
-                    alt={item.name}
-                    className="max-w-full max-h-full object-scale-down p-1"
-                    style={{ maxWidth: '90%', maxHeight: '90%' }}
-                    onError={(e) => {
-                      console.log("Image failed to load:", e.target.src);
-                      e.target.onerror = null; // Prevent infinite loops
-                      e.target.src = "/images/placeholder.jpg";
-                    }}
-                  />
-                </div>
-                <div className={`absolute inset-0 ${dark ? 'bg-pink-600' : 'bg-pink-600'} bg-opacity-0 group-hover:bg-opacity-10 rounded-xl transition-all duration-300`}></div>
-              </div>
-              
-              <div className="flex-1">
-                <h3 className={`font-semibold ${dark ? 'text-white' : 'text-gray-800'} text-lg md:text-xl`}>{item.name}</h3>
-                <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'} capitalize`}>
-                  {item.categoryName || item.category || 'Uncategorized'}
-                </p>
-                <p className={`${dark ? 'text-green-400' : 'text-green-600'} font-bold mt-1`}>
-                  {formatCurrency(item.pricePer100g || item.price || 0)}
-                </p>
-              </div>
-              
-              <div className="flex items-center gap-2 my-2 sm:my-0">
-                <button
-                  onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                  className={`w-8 h-8 rounded-full ${dark ? 'bg-gray-700 hover:bg-pink-800' : 'bg-gray-200 hover:bg-pink-200'} flex items-center justify-center transition-colors shadow-sm hover:shadow transform hover:scale-110`}
-                  aria-label="Decrease quantity"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${dark ? 'text-white' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                  </svg>
-                </button>
-                <span className={`w-10 text-center font-medium ${dark ? 'text-white' : ''}`}>{item.quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                  className={`w-8 h-8 rounded-full ${dark ? 'bg-gray-700 hover:bg-pink-800' : 'bg-gray-200 hover:bg-pink-200'} flex items-center justify-center transition-colors shadow-sm hover:shadow transform hover:scale-110`}
-                  aria-label="Increase quantity"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${dark ? 'text-white' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
-              
-              <div className="text-right flex flex-col items-end">
-                <p className={`font-bold ${dark ? 'text-white' : 'text-gray-800'} text-lg`}>
-                  {formatCurrency((item.pricePer100g || item.price || 0) * item.quantity)}
-                </p>
-                <button
-                  onClick={() => handleRemove(item.id)}
-                  className="text-red-600 hover:text-red-800 text-sm mt-1 transition-all duration-300 hover:underline flex items-center gap-1"
-                >
-                  <span>Remove</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+    <div className={`min-h-screen py-8 px-4 ${dark ? 'bg-gray-900' : 'bg-gradient-to-br from-pink-50 via-white to-purple-50'}`}>
+      {/* Header Section */}
+      <div className="max-w-6xl mx-auto mb-8">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="text-5xl">🛒</div>
+              <div className={`absolute -top-2 -right-2 w-8 h-8 ${dark ? 'bg-pink-600' : 'bg-pink-500'} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
+                {cart.length}
               </div>
             </div>
-          ))}
-        </div>
-        
-        <div className={`${dark ? 'bg-gradient-to-b from-gray-700 to-gray-800 border-gray-700' : 'bg-gradient-to-b from-gray-50 to-white border-gray-100'} p-4 sm:p-6 md:p-8 border-t`}>
-          {/* Promo Code */}
-          {!applied ? (
-            <div className="mb-6 flex flex-col sm:flex-row gap-3 items-start sm:items-end">
-              <div className="flex-1 w-full">
-                <label className={`block text-sm font-medium ${dark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Promo Code</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Enter coupon code"
-                    value={promo}
-                    onChange={e => setPromo(e.target.value)}
-                    className={`w-full ${dark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300'} border px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent shadow-sm`}
-                  />
-                  {promo && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <span className={`text-xs ${dark ? 'bg-gray-600 text-gray-200' : 'bg-gray-200 text-gray-600'} px-3 py-1 rounded-full font-medium`}>
-                        No discount
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className={`mb-6 flex items-center justify-between ${dark ? 'bg-green-900 border-green-700' : 'bg-green-50 border-green-200'} border rounded-xl px-4 py-3 shadow-inner animate-pulse`}>
-              <div className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${dark ? 'text-green-400' : 'text-green-600'}`} viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <div className={`text-sm font-medium ${dark ? 'text-green-300' : 'text-green-700'}`}>Coupon <span className="font-bold">7Forever</span> applied – ₹20 off</div>
-              </div>
-            </div>
-          )}
-          
-          <div className={`space-y-3 text-sm mb-6 p-4 ${dark ? 'bg-gray-700' : 'bg-white'} rounded-xl shadow-inner`}>
-            <div className="flex justify-between items-center">
-              <span className={`${dark ? 'text-gray-300' : 'text-gray-600'}`}>Subtotal</span>
-              <span className={`font-medium ${dark ? 'text-white' : ''}`}>{formatCurrency(subtotal)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className={`${dark ? 'text-gray-300' : 'text-gray-600'}`}>Discount</span>
-              <span className={`${applied ? (dark ? "text-green-400 font-medium" : "text-green-600 font-medium") : (dark ? "text-gray-400" : "text-gray-500")}`}>
-                - {formatCurrency(discount)}
-              </span>
-            </div>
-            <div className={`flex justify-between items-center font-semibold ${dark ? 'border-gray-600' : 'border-gray-200'} border-t pt-3 text-lg`}>
-              <span className={dark ? 'text-white' : ''}>Total</span>
-              <span className={dark ? 'text-green-400' : 'text-green-600'}>{formatCurrency(total)}</span>
+            <div>
+              <h1 className={`text-3xl md:text-4xl font-bold ${dark ? 'text-white' : 'text-gray-900'} font-serif`}>
+                Shopping Cart
+              </h1>
+              <p className={`${dark ? 'text-gray-300' : 'text-gray-600'} text-lg`}>
+                {cart.length} {cart.length === 1 ? 'item' : 'items'} in your cart
+              </p>
             </div>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link 
-              to="/shop" 
-              className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 text-white text-center py-3 px-4 rounded-full font-medium hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] flex items-center justify-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              <span>Continue Shopping</span>
-            </Link>
-            {isAuthenticated() ? (
+          <button
+            onClick={() => { 
+              clearCart(); 
+              try { localStorage.removeItem("couponCode"); } catch { /* ignore */ } 
+            }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300
+              ${dark 
+                ? 'bg-red-600 hover:bg-red-700 text-white' 
+                : 'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200'
+              } shadow-md hover:shadow-lg transform hover:scale-105`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Clear Cart
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Cart Items */}
+          <div className="lg:col-span-2">
+            <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl border overflow-hidden`}>
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {cart.map((item, index) => (
+                  <div key={item.id} className={`p-6 transition-all duration-300 ${dark ? 'hover:bg-gray-750' : 'hover:bg-gray-50'} group`}>
+                    <div className="flex flex-col md:flex-row gap-6">
+                      {/* Product Image */}
+                      <div className="relative flex-shrink-0">
+                        <div className={`w-32 h-32 rounded-2xl overflow-hidden shadow-lg ${dark ? 'bg-gray-700 border-2 border-gray-600' : 'bg-gray-50 border border-gray-200'} group-hover:shadow-xl transition-all duration-300`}>
+                          <img
+                            src={item.imageUrl || "/images/placeholder.jpg"}
+                            alt={item.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/images/placeholder.jpg";
+                            }}
+                          />
+                        </div>
+                        {/* Product Badge */}
+                        <div className={`absolute -top-2 -right-2 px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-pink-600 text-white' : 'bg-pink-100 text-pink-600'}`}>
+                          #{index + 1}
+                        </div>
+                      </div>
+                      
+                      {/* Product Details */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h3 className={`text-xl font-bold ${dark ? 'text-white' : 'text-gray-900'} mb-1 truncate`}>
+                              {item.name}
+                            </h3>
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${dark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                                {item.categoryName || item.category || 'Uncategorized'}
+                              </span>
+                            </div>
+                            <p className={`text-2xl font-bold ${dark ? 'text-green-400' : 'text-green-600'} flex items-center gap-2`}>
+                              {formatCurrency(item.pricePer100g || item.price || 0)}
+                              <span className={`text-sm font-normal ${dark ? 'text-gray-400' : 'text-gray-500'}`}>per unit</span>
+                            </p>
+                          </div>
+                          
+                          <button
+                            onClick={() => handleRemove(item.id)}
+                            className={`p-2 rounded-lg transition-all duration-300 ${dark ? 'hover:bg-red-600 text-gray-400 hover:text-white' : 'hover:bg-red-50 text-gray-400 hover:text-red-600'} group/remove`}
+                            aria-label="Remove item"
+                          >
+                            <svg className="w-5 h-5 group-hover/remove:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        
+                        {/* Quantity Controls */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className={`text-sm font-medium ${dark ? 'text-gray-300' : 'text-gray-600'}`}>Quantity:</span>
+                            <div className={`flex items-center border rounded-xl overflow-hidden ${dark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-white'} shadow-md`}>
+                              <button
+                                onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                className={`px-4 py-2 font-bold transition-colors ${dark ? 'hover:bg-gray-600 text-white' : 'hover:bg-gray-100 text-gray-700'}`}
+                                aria-label="Decrease quantity"
+                              >
+                                −
+                              </button>
+                              <span className={`px-6 py-2 font-bold text-lg min-w-[60px] text-center ${dark ? 'text-white bg-gray-800' : 'text-gray-900 bg-gray-50'}`}>
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                className={`px-4 py-2 font-bold transition-colors ${dark ? 'hover:bg-gray-600 text-white' : 'hover:bg-gray-100 text-gray-700'}`}
+                                aria-label="Increase quantity"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                          
+                          {/* Item Total */}
+                          <div className="text-right">
+                            <p className={`text-2xl font-bold ${dark ? 'text-white' : 'text-gray-900'}`}>
+                              {formatCurrency((item.pricePer100g || item.price || 0) * item.quantity)}
+                            </p>
+                            <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+                              {item.quantity} × {formatCurrency(item.pricePer100g || item.price || 0)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {/* Order Summary */}
+          <div className="space-y-6">
+            {/* Order Summary Card */}
+            <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-2xl shadow-xl border overflow-hidden`}>
+              <div className={`p-6 border-b ${dark ? 'border-gray-700 bg-gradient-to-r from-gray-700 to-gray-800' : 'border-gray-100 bg-gradient-to-r from-gray-50 to-gray-100'}`}>
+                <h2 className={`text-xl font-bold ${dark ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+                  <span>📋</span>
+                  Order Summary
+                </h2>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                {/* Promo Code Section */}
+                {!applied ? (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowPromoInput(!showPromoInput)}
+                      className={`w-full flex items-center justify-between p-4 rounded-xl border-2 border-dashed transition-all duration-300
+                        ${showPromoInput 
+                          ? (dark ? 'border-pink-600 bg-pink-900/20' : 'border-pink-400 bg-pink-50') 
+                          : (dark ? 'border-gray-600 bg-gray-700/50 hover:border-pink-600' : 'border-gray-300 bg-gray-50 hover:border-pink-400')
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">🎫</span>
+                        <span className={`font-medium ${dark ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {showPromoInput ? 'Hide Promo Code' : 'Have a promo code?'}
+                        </span>
+                      </div>
+                      <svg className={`w-5 h-5 transition-transform ${showPromoInput ? 'rotate-180' : ''} ${dark ? 'text-gray-400' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {showPromoInput && (
+                      <div className="space-y-3 animate-fade-in">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Enter promo code (try: 7FOREVER)"
+                            value={promo}
+                            onChange={e => setPromo(e.target.value)}
+                            className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-300
+                              ${dark 
+                                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-pink-500 focus:bg-gray-600' 
+                                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-pink-500 focus:bg-pink-50'
+                              } focus:outline-none focus:ring-2 focus:ring-pink-500/20`}
+                          />
+                          {promo && !applied && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              <span className={`text-xs px-2 py-1 rounded-full ${dark ? 'bg-red-600 text-white' : 'bg-red-100 text-red-600'}`}>
+                                Invalid
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className={`text-xs p-3 rounded-lg ${dark ? 'bg-blue-900/30 text-blue-300 border border-blue-700' : 'bg-blue-50 text-blue-600 border border-blue-200'}`}>
+                          💡 <strong>Tip:</strong> Use code "7FOREVER" to get ₹20 off your order
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className={`p-4 rounded-xl border-2 ${dark ? 'bg-green-900/30 border-green-600' : 'bg-green-50 border-green-300'} animate-pulse`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">✅</span>
+                        <div>
+                          <p className={`font-bold ${dark ? 'text-green-300' : 'text-green-700'}`}>Promo Applied!</p>
+                          <p className={`text-sm ${dark ? 'text-green-400' : 'text-green-600'}`}>Code: <strong>7FOREVER</strong></p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-bold ${dark ? 'text-green-300' : 'text-green-700'}`}>-₹20</p>
+                        <p className={`text-xs ${dark ? 'text-green-400' : 'text-green-600'}`}>Discount</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setPromo('');
+                        setShowPromoInput(false);
+                      }}
+                      className={`mt-3 text-sm ${dark ? 'text-green-400 hover:text-green-300' : 'text-green-700 hover:text-green-600'} underline`}
+                    >
+                      Remove promo code
+                    </button>
+                  </div>
+                )}
+                
+                {/* Order Breakdown */}
+                <div className={`space-y-3 pt-4 border-t ${dark ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`${dark ? 'text-gray-300' : 'text-gray-600'} flex items-center gap-2`}>
+                      <span>🛍️</span>
+                      Subtotal ({cart.length} items)
+                    </span>
+                    <span className={`font-bold ${dark ? 'text-white' : 'text-gray-900'}`}>{formatCurrency(subtotal)}</span>
+                  </div>
+                  
+                  {applied && (
+                    <div className="flex justify-between items-center">
+                      <span className={`${dark ? 'text-green-400' : 'text-green-600'} flex items-center gap-2`}>
+                        <span>🎫</span>
+                        Promo Discount
+                      </span>
+                      <span className={`font-bold ${dark ? 'text-green-400' : 'text-green-600'}`}>-{formatCurrency(discount)}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between items-center">
+                    <span className={`${dark ? 'text-gray-300' : 'text-gray-600'} flex items-center gap-2`}>
+                      <span>🚚</span>
+                      Shipping
+                    </span>
+                    <span className={`font-bold ${total >= 500 ? (dark ? 'text-green-400' : 'text-green-600') : (dark ? 'text-white' : 'text-gray-900')}`}>
+                      {total >= 500 ? 'FREE' : formatCurrency(50)}
+                    </span>
+                  </div>
+                  
+                  {total < 500 && (
+                    <div className={`text-xs p-2 rounded-lg ${dark ? 'bg-yellow-900/30 text-yellow-300 border border-yellow-700' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'}`}>
+                      💰 Add {formatCurrency(500 - total)} more for FREE shipping!
+                    </div>
+                  )}
+                </div>
+                
+                {/* Total */}
+                <div className={`pt-4 border-t-2 ${dark ? 'border-gray-600' : 'border-gray-300'}`}>
+                  <div className="flex justify-between items-center">
+                    <span className={`text-xl font-bold ${dark ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+                      <span>💰</span>
+                      Total
+                    </span>
+                    <div className="text-right">
+                      <span className={`text-2xl font-bold ${dark ? 'text-pink-400' : 'text-pink-600'}`}>
+                        {formatCurrency(total + (total >= 500 ? 0 : 50))}
+                      </span>
+                      {applied && (
+                        <p className={`text-sm ${dark ? 'text-green-400' : 'text-green-600'}`}>
+                          You saved ₹20!
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="space-y-4">
               <Link 
-                to="/checkout" 
-                className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white text-center py-3 px-4 rounded-full font-medium hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] flex items-center justify-center gap-2"
+                to="/shop" 
+                className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105
+                  ${dark 
+                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-300 border border-gray-600' 
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200'
+                  }`}
               >
-                <span>Proceed to Checkout</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
+                <span>Continue Shopping</span>
               </Link>
-            ) : (
-              <Link 
-                to="/login" 
-                className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-3 px-4 rounded-full font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] flex items-center justify-center gap-2"
-              >
-                <span>Login to Checkout</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </Link>
-            )}
+              
+              {isAuthenticated() ? (
+                <Link 
+                  to="/checkout" 
+                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-bold text-white text-lg transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1
+                    ${dark 
+                      ? 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700' 
+                      : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
+                    }`}
+                >
+                  <span>🛒</span>
+                  <span>Proceed to Checkout</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+              ) : (
+                <Link 
+                  to="/login" 
+                  className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-bold text-white text-lg transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1
+                    ${dark 
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' 
+                      : 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600'
+                    }`}
+                >
+                  <span>🔐</span>
+                  <span>Login to Checkout</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  </svg>
+                </Link>
+              )}
+            </div>
+            
+            {/* Trust Badges */}
+            <div className={`p-4 rounded-xl ${dark ? 'bg-gray-800/50 border border-gray-700' : 'bg-gray-50 border border-gray-200'}`}>
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-2xl">🔒</span>
+                  <span className={`text-xs font-medium ${dark ? 'text-gray-400' : 'text-gray-600'}`}>Secure Payment</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-2xl">🌸</span>
+                  <span className={`text-xs font-medium ${dark ? 'text-gray-400' : 'text-gray-600'}`}>Fresh Guarantee</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-2xl">🚚</span>
+                  <span className={`text-xs font-medium ${dark ? 'text-gray-400' : 'text-gray-600'}`}>Fast Delivery</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-2xl">💝</span>
+                  <span className={`text-xs font-medium ${dark ? 'text-gray-400' : 'text-gray-600'}`}>Gift Ready</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
