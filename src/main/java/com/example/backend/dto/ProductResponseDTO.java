@@ -11,5 +11,7 @@ public record ProductResponseDTO(
         String categoryName,
         Long floristId,
         String floristName,
-        Boolean featured
+        Boolean featured,
+        Double averageRating,
+        Long reviewCount
 ) {}

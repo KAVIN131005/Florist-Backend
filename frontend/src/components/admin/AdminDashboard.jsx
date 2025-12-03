@@ -27,6 +27,7 @@ export default function AdminDashboard() {
           totalOrders: resolve(s, ["totalOrders","totalOrders1"], 0),
           totalPaidOrders: resolve(s, ["totalPaidOrders","totalPaidOrders1"], 0)
         });
+      // eslint-disable-next-line no-unused-vars
       } catch (e) {
         console.log("Backend stats unavailable, calculating from available data...");
         // Fallback: Calculate stats from available data
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
                       uniqueUserIds.add(order.userId || order.user.id);
                     }
                   });
+                // eslint-disable-next-line no-empty
                 } catch {}
               }
             }
@@ -62,6 +64,7 @@ export default function AdminDashboard() {
                   uniqueUserIds.add(user.id || user.userId);
                 }
               }
+            // eslint-disable-next-line no-empty
             } catch {}
             
             userCount = uniqueUserIds.size;
@@ -83,6 +86,7 @@ export default function AdminDashboard() {
                   uniqueFloristIds.add(product.floristId || product.createdBy);
                 }
               });
+            // eslint-disable-next-line no-empty
             } catch {}
             
             // Also check orders for florist information
@@ -100,6 +104,7 @@ export default function AdminDashboard() {
                       });
                     }
                   });
+                // eslint-disable-next-line no-empty
                 } catch {}
               }
             }

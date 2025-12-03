@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { ThemeContext } from "../../context/themeContextDefinition";
 import api from "../../services/api";
+import OrderReviews from "./OrderReviews";
 
 export default function OrderTracking() {
   const { id } = useParams();
@@ -451,37 +452,26 @@ export default function OrderTracking() {
               </div>
               
               {order.status === 'DELIVERED' && (
-                <div className={`mt-6 p-6 rounded-2xl ${dark ? 'bg-gradient-to-br from-green-900 to-emerald-900 border-green-500' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'} border-2 relative overflow-hidden`}>
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-green-400 rounded-full opacity-10 -mr-10 -mt-10"></div>
-                  <div className="relative">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="text-3xl animate-bounce">🎉</div>
-                      <div>
-                        <p className={`font-bold text-xl ${dark ? 'text-green-300' : 'text-green-700'}`}>
-                          Delivery Completed Successfully!
-                        </p>
-                        <p className={`text-sm ${dark ? 'text-green-400' : 'text-green-600'}`}>
-                          Thank you for choosing our flower delivery service
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className={`p-4 rounded-xl ${dark ? 'bg-green-800/50' : 'bg-green-100/70'}`}>
-                        <p className={`text-sm ${dark ? 'text-green-300' : 'text-green-700'} font-medium mb-2`}>📱 Rate Your Experience</p>
-                        <div className="flex gap-1">
-                          {[1,2,3,4,5].map(i => <span key={i} className="text-2xl cursor-pointer hover:scale-125 transition-transform">⭐</span>)}
+                <div>
+                  <div className={`mt-6 p-6 rounded-2xl ${dark ? 'bg-gradient-to-br from-green-900 to-emerald-900 border-green-500' : 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'} border-2 relative overflow-hidden`}>
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-green-400 rounded-full opacity-10 -mr-10 -mt-10"></div>
+                    <div className="relative">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="text-3xl animate-bounce">🎉</div>
+                        <div>
+                          <p className={`font-bold text-xl ${dark ? 'text-green-300' : 'text-green-700'}`}>
+                            Delivery Completed Successfully!
+                          </p>
+                          <p className={`text-sm ${dark ? 'text-green-400' : 'text-green-600'}`}>
+                            Thank you for choosing our flower delivery service
+                          </p>
                         </div>
-                      </div>
-                      
-                      <div className={`p-4 rounded-xl ${dark ? 'bg-green-800/50' : 'bg-green-100/70'}`}>
-                        <p className={`text-sm ${dark ? 'text-green-300' : 'text-green-700'} font-medium mb-2`}>🔄 Order Again</p>
-                        <button className={`px-4 py-2 rounded-lg text-sm font-bold ${dark ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-600'} text-white transition-colors`}>
-                          Reorder Now
-                        </button>
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Review Section */}
+                  <OrderReviews order={order} />
                 </div>
               )}
             </div>

@@ -43,4 +43,15 @@ public class Product {
     // Flags
     private Boolean active;
     private Boolean featured;
+
+    // Review-related transient fields (calculated at runtime)
+    @Transient
+    private Double averageRating;
+    
+    @Transient
+    private Long reviewCount;
+    
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private java.util.Set<Review> reviews = new java.util.HashSet<>();
 }

@@ -31,6 +31,7 @@ public class ProductService {
     private final ProductRepository productRepo;
     private final CategoryRepository categoryRepo;
     private final UserService userService;
+    private final ReviewService reviewService;
 
     // CREATE PRODUCT
     @Transactional
@@ -199,6 +200,9 @@ public class ProductService {
 
     // HELPER: Convert Product to DTO
     private ProductResponseDTO toDTO(Product p) {
+        Double averageRating = reviewService.getAverageRating(p.getId());
+        Long reviewCount = reviewService.getReviewCount(p.getId());
+        
         return new ProductResponseDTO(
                 p.getId(),
                 p.getName(),
@@ -210,7 +214,9 @@ public class ProductService {
                 p.getCategory() != null ? p.getCategory().getName() : null,
                 p.getFlorist().getId(),
                 p.getFlorist().getName(),
-                p.getFeatured()
+                p.getFeatured(),
+                averageRating != null ? averageRating : 0.0,
+                reviewCount
         );
     }
 }
