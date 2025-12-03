@@ -11,24 +11,6 @@ export default function AdminDashboard() {
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [showOrderingUsers, setShowOrderingUsers] = useState(false);
   
-  // Revenue split memo (only for orders that are at least paid)
-  const revenueSplit = useMemo(() => {
-    if (!orders || orders.length === 0) return { gross: 0, admin: 0, florist: 0, paidCount: 0 };
-    const paidStatuses = ["PAID", "PROCESSING", "SHIPPED", "DELIVERED"]; // treat these as revenue-realized
-    let gross = 0; let paidCount = 0;
-    orders.forEach(o => {
-      if (paidStatuses.includes(o.status)) {
-        const t = Number(o.total || 0);
-        if (!isNaN(t)) {
-          gross += t; paidCount += 1;
-        }
-      }
-    });
-    const admin = gross * 0.20;
-    const florist = gross * 0.80; // remainder
-    return { gross, admin, florist, paidCount };
-  }, [orders]);
-
   useEffect(() => {
     (async () => {
       try {
@@ -38,9 +20,12 @@ export default function AdminDashboard() {
         const resolve = (obj, keys, def=0) => keys.reduce((acc,k)=> acc ?? obj?.[k], null) ?? def;
         setStats({
           platformEarnings: resolve(s, ["platformEarnings","earnings","revenue","platformEarnings1"], 0),
+          floristEarnings: resolve(s, ["floristEarnings","floristEarnings1"], 0),
+          totalRevenue: resolve(s, ["totalRevenue","totalRevenue1"], 0),
           totalUsers: resolve(s, ["totalUsers","users","userCount","totalUsers1"], 0),
-          totalOrders: resolve(s, ["totalOrders","orders","orderCount","totalOrders1"], 0),
-          totalFlorists: resolve(s, ["totalFlorists","florists","floristCount","totalFlorists1"], 0)
+          totalFlorists: resolve(s, ["totalFlorists","florists","floristCount","totalFlorists1"], 0),
+          totalOrders: resolve(s, ["totalOrders","totalOrders1"], 0),
+          totalPaidOrders: resolve(s, ["totalPaidOrders","totalPaidOrders1"], 0)
         });
       } catch (e) {
         console.log("Backend stats unavailable, calculating from available data...");
@@ -125,7 +110,6 @@ export default function AdminDashboard() {
           setStats({
             platformEarnings: 0,
             totalUsers: userCount,
-            totalOrders: 0, // Will be calculated from orders in next useEffect
             totalFlorists: floristCount
           });
         } catch (fallbackError) {
@@ -133,7 +117,6 @@ export default function AdminDashboard() {
           setStats({
             platformEarnings: 0,
             totalUsers: 0,
-            totalOrders: 0,
             totalFlorists: 0
           });
         }
@@ -143,70 +126,30 @@ export default function AdminDashboard() {
     })();
   }, []);
 
-  // Load all orders (backend or fallback local) for listing/counts
+  // Load all orders from backend only, fallback to local only on error
   useEffect(() => {
     let cancelled = false;
     setOrdersLoading(true);
     adminService.getAllOrders()
       .then(list => {
         if (cancelled) return;
-        if (Array.isArray(list) && list.length > 0) {
-          setOrders(list);
-          // Update stats with actual order count
-          setStats(prev => prev ? { ...prev, totalOrders: list.length } : null);
-        } else {
-          // Treat empty list as possible backend placeholder -> fallback to local scan
+        // Always use backend data when available, even if empty
+        setOrders(Array.isArray(list) ? list : []);
+      })
+      .catch(() => {
+        console.log("Backend orders fetch failed, using local fallback");
+        if (!cancelled) {
+          // Only use localStorage as fallback when backend fails
           const localOrders = [];
           for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key && key.startsWith("orders:")) {
-              try { localOrders.push(...JSON.parse(localStorage.getItem(key) || "[]")); } catch { /* ignore parse error */ }
+              try { 
+                localOrders.push(...JSON.parse(localStorage.getItem(key) || "[]")); 
+              } catch { /* ignore parse error */ }
             }
           }
-          
-          // If no local orders either, create demo data
-          if (localOrders.length === 0) {
-            const demoOrders = [
-              { id: 1, userId: 'user1', user: { name: 'John Doe', id: 'user1' }, status: 'DELIVERED', total: 750, createdAt: new Date(Date.now() - 86400000).toISOString() },
-              { id: 2, userId: 'user2', user: { name: 'Jane Smith', id: 'user2' }, status: 'SHIPPED', total: 1250, createdAt: new Date(Date.now() - 172800000).toISOString() },
-              { id: 3, userId: 'user3', user: { name: 'Mike Wilson', id: 'user3' }, status: 'PAID', total: 900, createdAt: new Date(Date.now() - 259200000).toISOString() },
-              { id: 4, userId: 'user1', user: { name: 'John Doe', id: 'user1' }, status: 'DELIVERED', total: 650, createdAt: new Date(Date.now() - 345600000).toISOString() },
-              { id: 5, userId: 'user4', user: { name: 'Sarah Brown', id: 'user4' }, status: 'PAID', total: 1100, createdAt: new Date(Date.now() - 432000000).toISOString() }
-            ];
-            localOrders.push(...demoOrders);
-          }
-          
           setOrders(localOrders);
-          // Update stats with local order count
-          setStats(prev => prev ? { ...prev, totalOrders: localOrders.length } : null);
-        }
-      })
-      .catch(err => {
-        console.log("Backend orders fetch failed, using local fallback");
-        const localOrders = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith("orders:")) {
-            try { localOrders.push(...JSON.parse(localStorage.getItem(key) || "[]")); } catch { /* ignore parse error */ }
-          }
-        }
-        
-        // If no local orders either, create demo data
-        if (localOrders.length === 0) {
-          const demoOrders = [
-            { id: 1, userId: 'user1', user: { name: 'John Doe', id: 'user1' }, status: 'DELIVERED', total: 750, createdAt: new Date(Date.now() - 86400000).toISOString() },
-            { id: 2, userId: 'user2', user: { name: 'Jane Smith', id: 'user2' }, status: 'SHIPPED', total: 1250, createdAt: new Date(Date.now() - 172800000).toISOString() },
-            { id: 3, userId: 'user3', user: { name: 'Mike Wilson', id: 'user3' }, status: 'PAID', total: 900, createdAt: new Date(Date.now() - 259200000).toISOString() },
-            { id: 4, userId: 'user1', user: { name: 'John Doe', id: 'user1' }, status: 'DELIVERED', total: 650, createdAt: new Date(Date.now() - 345600000).toISOString() },
-            { id: 5, userId: 'user4', user: { name: 'Sarah Brown', id: 'user4' }, status: 'PAID', total: 1100, createdAt: new Date(Date.now() - 432000000).toISOString() }
-          ];
-          localOrders.push(...demoOrders);
-        }
-        
-        if (!cancelled) {
-          setOrders(localOrders);
-          // Update stats with local order count
-          setStats(prev => prev ? { ...prev, totalOrders: localOrders.length } : null);
         }
       })
       .finally(() => { if (!cancelled) setOrdersLoading(false); });
@@ -227,22 +170,42 @@ export default function AdminDashboard() {
     return Array.from(map.values()).sort((a,b)=> b.count - a.count).slice(0, 5); // top 5
   }, [orders]);
 
-  // Recent orders sorted (fallback to original order if no date)
+  // Recent orders sorted (fallback to original order if no date) - deduplicated by ID
   const recentOrders = useMemo(() => {
     if (!orders || orders.length === 0) return [];
-    return [...orders].sort((a,b) => {
+    
+    // Deduplicate orders by ID first
+    const uniqueOrders = orders.reduce((acc, order) => {
+      const id = order.id || order._id;
+      if (id && !acc.some(o => (o.id || o._id) === id)) {
+        acc.push(order);
+      }
+      return acc;
+    }, []);
+    
+    return [...uniqueOrders].sort((a,b) => {
       const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return db - da; // newest first
     });
   }, [orders]);
 
-  // Top orders by total amount
+  // Top orders by total amount - deduplicated by ID
   const topOrders = useMemo(() => {
     if (!orders || orders.length === 0) return [];
-    return [...orders]
-      .filter(o => !isNaN(Number(o.total)))
-      .sort((a,b)=> Number(b.total||0) - Number(a.total||0))
+    
+    // Deduplicate orders by ID first
+    const uniqueOrders = orders.reduce((acc, order) => {
+      const id = order.id || order._id;
+      if (id && !acc.some(o => (o.id || o._id) === id)) {
+        acc.push(order);
+      }
+      return acc;
+    }, []);
+    
+    return [...uniqueOrders]
+      .filter(o => !isNaN(Number(o.totalAmount || o.total)))
+      .sort((a,b)=> Number(b.totalAmount || b.total || 0) - Number(a.totalAmount || a.total || 0))
       .slice(0,5);
   }, [orders]);
 
@@ -409,10 +372,10 @@ export default function AdminDashboard() {
               <div className="space-y-2">
                 <h3 className={`text-sm font-bold ${dark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>Admin Earnings (20%)</h3>
                 <p className={`text-3xl font-bold ${dark ? 'text-green-400' : 'text-green-600'} animate-pulse-glow`}>
-                  ₹{revenueSplit.admin.toFixed(2)}
+                  ₹{stats?.platformEarnings?.toFixed(2) || '0.00'}
                 </p>
                 <p className={`text-sm ${dark ? 'text-green-400' : 'text-green-600'}`}>
-                  📈 From {revenueSplit.paidCount} paid orders
+                  📈 From {stats?.totalPaidOrders || 0} paid orders
                 </p>
               </div>
             </div>
@@ -437,30 +400,6 @@ export default function AdminDashboard() {
                 </p>
                 <p className={`text-sm ${dark ? 'text-blue-400' : 'text-blue-600'}`}>
                   👤 Registered customers
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Total Orders Card */}
-          <div className={`${dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl border shadow-2xl overflow-hidden hover-lift relative`}>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient-x"></div>
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className={`w-16 h-16 rounded-2xl ${dark ? 'bg-gradient-to-br from-purple-600 to-pink-600' : 'bg-gradient-to-br from-purple-500 to-pink-500'} flex items-center justify-center shadow-xl animate-pulse`}>
-                  <span className="text-3xl filter drop-shadow-lg">📦</span>
-                </div>
-                <div className={`px-3 py-1 rounded-full text-xs font-bold ${dark ? 'bg-purple-900 text-purple-300' : 'bg-purple-100 text-purple-700'} animate-bounce`}>
-                  ORDERS
-                </div>
-              </div>
-              <div className="space-y-2">
-                <h3 className={`text-sm font-bold ${dark ? 'text-gray-400' : 'text-gray-600'} uppercase tracking-wide`}>Total Orders</h3>
-                <p className={`text-3xl font-bold ${dark ? 'text-purple-400' : 'text-purple-600'} animate-pulse-glow`}>
-                  {stats?.totalOrders?.toLocaleString() || orders.length.toLocaleString()}
-                </p>
-                <p className={`text-sm ${dark ? 'text-purple-400' : 'text-purple-600'}`}>
-                  🛒 Total transactions
                 </p>
               </div>
             </div>
@@ -620,7 +559,7 @@ export default function AdminDashboard() {
                       Gross Revenue
                     </p>
                     <p className={`text-2xl font-bold ${dark ? 'text-blue-400' : 'text-blue-600'}`}>
-                      ₹{revenueSplit.gross.toFixed(2)}
+                      ₹{stats?.totalRevenue?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </div>
@@ -633,7 +572,7 @@ export default function AdminDashboard() {
                       Platform Share (20%)
                     </p>
                     <p className={`text-xl font-bold ${dark ? 'text-green-400' : 'text-green-600'}`}>
-                      ₹{revenueSplit.admin.toFixed(2)}
+                      ₹{stats?.platformEarnings?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </div>
@@ -646,7 +585,7 @@ export default function AdminDashboard() {
                       Florists Share (80%)
                     </p>
                     <p className={`text-xl font-bold ${dark ? 'text-purple-400' : 'text-purple-600'}`}>
-                      ₹{revenueSplit.florist.toFixed(2)}
+                      ₹{stats?.floristEarnings?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </div>
@@ -655,7 +594,7 @@ export default function AdminDashboard() {
                 <div className={`p-4 rounded-2xl ${dark ? 'bg-yellow-900 text-yellow-200' : 'bg-yellow-50 text-yellow-700'} border ${dark ? 'border-yellow-700' : 'border-yellow-200'}`}>
                   <div className="text-center">
                     <p className="text-sm font-semibold mb-1">Paid Orders</p>
-                    <p className="text-lg font-bold">{revenueSplit.paidCount} orders</p>
+                    <p className="text-lg font-bold">{stats?.totalPaidOrders || 0} orders</p>
                   </div>
                 </div>
               </div>

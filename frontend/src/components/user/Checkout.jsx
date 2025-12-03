@@ -116,13 +116,16 @@ export default function Checkout() {
           const addressString = `${delivery.fullName}, ${delivery.addressLine}, ${delivery.city}, ${delivery.postalCode}. Phone: ${delivery.phone}`;
           let created;
           const discountInfo = couponApplied ? { code: '7FOREVER', amount: 20.0 } : null;
+          const shippingInfo = { cost: shippingCost, type: shippingCost === 0 ? 'FREE' : 'STANDARD', isFree: shippingCost === 0 };
+          console.log('Checkout: rawTotal =', rawTotal, 'discount =', discount, 'shippingCost =', shippingCost, 'total =', total);
+          console.log('Sending to backend - discountInfo:', discountInfo, 'shippingInfo:', shippingInfo);
           try {
             // Try creating order with cart items directly (new approach)
-            created = await orderService.createFromCartItems(addressString, cart, discountInfo);
+            created = await orderService.createFromCartItems(addressString, cart, discountInfo, shippingInfo);
           } catch (directOrderError) {
             console.warn("Direct cart items failed, trying synced cart approach", directOrderError);
             // Fallback to original cart-based approach
-            created = await orderService.createFromCart(addressString, discountInfo);
+            created = await orderService.createFromCart(addressString, discountInfo, shippingInfo);
           }
           const appOrderId = created.id || created._id;
           if (!appOrderId) throw new Error("No order id returned");

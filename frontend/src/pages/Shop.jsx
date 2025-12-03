@@ -12,7 +12,7 @@ export default function Shop() {
       setLoading(true);
       try {
         // Create a request without authentication for public products endpoint
-        const res = await fetch("http://localhost:8081/api/products", {
+        const res = await fetch("http://localhost:8081/api/products?size=1000", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"

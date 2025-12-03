@@ -28,9 +28,11 @@ import com.example.backend.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
     @PersistenceContext
     private EntityManager entityManager;
@@ -44,19 +46,24 @@ public class OrderService {
 
     @Transactional
     public Order createFromCart(String address) {
+        return createFromCart(address, null, null);
+    }
+    
+    @Transactional
+    public Order createFromCart(String address, OrderCreateDTO.DiscountInfo discount, OrderCreateDTO.ShippingInfo shipping) {
         User user = userService.getCurrentUser();
         Cart cart = cartRepo.findByUser(user).orElse(null);
         
         // If cart exists and has items, use it
         if (cart != null && !cart.getItems().isEmpty()) {
-            return createOrderFromDbCart(user, cart, address);
+            return createOrderFromDbCart(user, cart, address, discount, shipping);
         } else {
             throw new RuntimeException("Cart empty - please add items to cart");
         }
     }
 
     @Transactional
-    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems, OrderCreateDTO.DiscountInfo discount) {
+    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems, OrderCreateDTO.DiscountInfo discount, OrderCreateDTO.ShippingInfo shipping) {
         User user = userService.getCurrentUser();
         
         if (cartItems == null || cartItems.isEmpty()) {
@@ -104,6 +111,15 @@ public class OrderService {
         // Apply discount if provided
         if (discount != null && discount.amount() != null && discount.amount() > 0) {
             total = Math.max(0, total - discount.amount());
+            log.info("Applied discount of {} to order, new total: {}", discount.amount(), total);
+        }
+        
+        // Add shipping cost if provided
+        if (shipping != null && shipping.cost() != null && shipping.cost() > 0) {
+            total += shipping.cost();
+            log.info("Added shipping cost of {} to order, final total: {}", shipping.cost(), total);
+        } else {
+            log.info("No shipping cost applied - shipping info: {}", shipping);
         }
         
         order.setTotalAmount(total);
@@ -121,12 +137,22 @@ public class OrderService {
 
     // Backward compatibility method
     @Transactional
-    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems) {
-        return createFromCartItemsAsDTO(address, cartItems, null);
+    public OrderResponseDTO createFromCartItemsAsDTO(String address, List<OrderCreateDTO.CartItemRequest> cartItems, OrderCreateDTO.DiscountInfo discount) {
+        return createFromCartItemsAsDTO(address, cartItems, discount, null);
     }
 
     @Transactional
     public Order createFromCartItems(String address, List<OrderCreateDTO.CartItemRequest> cartItems) {
+        return createFromCartItems(address, cartItems, null, null);
+    }
+
+    @Transactional
+    public Order createFromCartItems(String address, List<OrderCreateDTO.CartItemRequest> cartItems, OrderCreateDTO.DiscountInfo discount) {
+        return createFromCartItems(address, cartItems, discount, null);
+    }
+
+    @Transactional
+    public Order createFromCartItems(String address, List<OrderCreateDTO.CartItemRequest> cartItems, OrderCreateDTO.DiscountInfo discount, OrderCreateDTO.ShippingInfo shipping) {
         User user = userService.getCurrentUser();
         
         if (cartItems == null || cartItems.isEmpty()) {
@@ -160,12 +186,26 @@ public class OrderService {
             orderItemRepo.save(oi);
         }
         
+        // Apply discount if provided
+        if (discount != null && discount.amount() != null && discount.amount() > 0) {
+            total = Math.max(0, total - discount.amount());
+        }
+        
+        // Add shipping cost if provided
+        if (shipping != null && shipping.cost() != null && shipping.cost() > 0) {
+            total += shipping.cost();
+        }
+        
         order.setTotalAmount(total);
         orderRepo.save(order);
         return order;
     }
 
     private Order createOrderFromDbCart(User user, Cart cart, String address) {
+        return createOrderFromDbCart(user, cart, address, null, null);
+    }
+    
+    private Order createOrderFromDbCart(User user, Cart cart, String address, OrderCreateDTO.DiscountInfo discount, OrderCreateDTO.ShippingInfo shipping) {
         Order order = Order.builder().user(user).createdAt(Instant.now())
             .status(Order.Status.CREATED).totalAmount(0.0).build();
         orderRepo.save(order);
@@ -179,6 +219,17 @@ public class OrderService {
                 .pricePer100g(ci.getPricePer100gAtAdd()).subtotal(subtotal).build();
             orderItemRepo.save(oi);
         }
+        
+        // Apply discount if provided
+        if (discount != null && discount.amount() != null && discount.amount() > 0) {
+            total = Math.max(0, total - discount.amount());
+        }
+        
+        // Add shipping cost if provided
+        if (shipping != null && shipping.cost() != null && shipping.cost() > 0) {
+            total += shipping.cost();
+        }
+        
         order.setTotalAmount(total);
         orderRepo.save(order);
 
@@ -325,10 +376,20 @@ public class OrderService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponseDTO> getAllOrders() {
+        // Use findAllWithItems to eagerly fetch items to avoid lazy loading issues
         return orderRepo.findAll().stream()
+            .peek(order -> {
+                // Explicitly initialize the lazy collection
+                order.getItems().size(); // This forces Hibernate to load the items
+            })
             .map(this::toDTO)
             .collect(Collectors.toList());
+    }
+
+    public long getOrderCount() {
+        return orderRepo.count();
     }
 
     public OrderResponseDTO toDTO(Order o) {

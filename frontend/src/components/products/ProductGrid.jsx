@@ -31,7 +31,7 @@ export default function ProductGrid({ products: propProducts = null, featured = 
       const fetchProducts = async () => {
         setLoading(true);
         try {
-          const res = await api.get("/products");
+          const res = await api.get("/products", { params: { size: 1000 } });
           let data = res.data.content || [];
           if (featured) data = data.filter(p => p.featured);
           setProducts(data);

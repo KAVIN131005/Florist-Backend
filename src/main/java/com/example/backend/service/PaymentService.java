@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class PaymentService {
         try {
             // Convert amount to paise (Razorpay expects amount in smallest currency unit)
             int amountInPaise = (int) (ord.getTotalAmount() * 100);
+            
+            log.info("Creating Razorpay order for Order ID {} with total amount: ₹{} (₹{} in paise)", 
+                     orderId, ord.getTotalAmount(), amountInPaise);
             
             // Create Razorpay order
             JSONObject orderRequest = new JSONObject();
@@ -121,6 +125,9 @@ public class PaymentService {
             payment.setFloristShare(floristShare);
             payment.setAdminShare(adminShare);
             
+            log.info("Order {} - Total: ₹{}, Florist Share (80%): ₹{}, Admin Share (20% + shipping): ₹{}", 
+                     orderId, ord.getTotalAmount(), floristShare, adminShare);
+            
             paymentRepo.save(payment);
             
             // Credit wallets with 80% florist / 20% admin split
@@ -150,6 +157,43 @@ public class PaymentService {
         }
     }
     
+    // Get platform earnings from actual payment data
+    public PlatformStatsDTO getPlatformEarnings() {
+        List<Payment> successfulPayments = paymentRepo.findByStatus(Payment.Status.SUCCESS);
+        
+        log.info("Calculating platform earnings from {} successful payments", successfulPayments.size());
+        
+        double totalAdminEarnings = successfulPayments.stream()
+                .mapToDouble(p -> p.getAdminShare() != null ? p.getAdminShare() : 0.0)
+                .sum();
+        
+        double totalFloristEarnings = successfulPayments.stream()
+                .mapToDouble(p -> p.getFloristShare() != null ? p.getFloristShare() : 0.0)
+                .sum();
+        
+        double totalRevenue = totalAdminEarnings + totalFloristEarnings;
+        
+        log.info("Platform Stats - Total Revenue: ₹{}, Admin Earnings: ₹{}, Florist Earnings: ₹{}", 
+                 totalRevenue, totalAdminEarnings, totalFloristEarnings);
+        
+        return new PlatformStatsDTO(totalRevenue, totalAdminEarnings, totalFloristEarnings, successfulPayments.size());
+    }
+    
+    // DTO for platform stats
+    public static class PlatformStatsDTO {
+        public final double totalRevenue;
+        public final double adminEarnings;
+        public final double floristEarnings;
+        public final int totalPaidOrders;
+        
+        public PlatformStatsDTO(double totalRevenue, double adminEarnings, double floristEarnings, int totalPaidOrders) {
+            this.totalRevenue = totalRevenue;
+            this.adminEarnings = adminEarnings;
+            this.floristEarnings = floristEarnings;
+            this.totalPaidOrders = totalPaidOrders;
+        }
+    }
+    
     // Keep the old dummy payment method for backward compatibility
     public PaymentResponseDTO createDummyPayment(Long orderId) {
         return createRazorpayOrder(orderId);
@@ -158,6 +202,8 @@ public class PaymentService {
     @Transactional
     public void confirmDummyPayment(Long orderId, String paymentId) {
         // For backward compatibility, this now just confirms without signature verification
+        log.info("Processing dummy payment confirmation for Order ID: {}, Payment ID: {}", orderId, paymentId);
+        
         com.example.backend.model.Order ord = orderRepo.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
@@ -169,15 +215,19 @@ public class PaymentService {
         payment.setPaidAt(Instant.now());
         paymentRepo.save(payment);
         
-        // Calculate and credit shares
-        double floristShare = ord.getItems().stream().mapToDouble(i -> i.getSubtotal() * 0.6).sum();
+        // Calculate and credit shares - consistent with main payment flow
+        double floristShare = ord.getItems().stream().mapToDouble(i -> i.getSubtotal() * 0.8).sum();
         double adminShare = ord.getTotalAmount() - floristShare;
         payment.setFloristShare(floristShare);
         payment.setAdminShare(adminShare);
         
+        log.info("Dummy Payment Order {} - Total: ₹{}, Florist Share (80%): ₹{}, Admin Share (20% + shipping): ₹{}", 
+                 orderId, ord.getTotalAmount(), floristShare, adminShare);
+        
+        // Credit wallets with 80% florist / 20% admin split  
         ord.getItems().forEach(oi -> {
             User florist = oi.getProduct().getFlorist();
-            walletService.credit(florist, oi.getSubtotal() * 0.6);
+            walletService.credit(florist, oi.getSubtotal() * 0.8);
         });
         
         User admin = userRepo.findAll().stream()

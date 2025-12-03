@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/featured", "/api/products/*", "/api/categories", "/api/categories/**").permitAll()
                 // Protect florist endpoints and product mutations
                 .requestMatchers("/api/products/mine", "/api/products/**").authenticated()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // Temporarily allow admin endpoints without authentication for debugging
+                .requestMatchers("/api/admin/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

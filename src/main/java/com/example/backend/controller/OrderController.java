@@ -21,19 +21,22 @@ import com.example.backend.service.OrderService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@RestController @RequestMapping("/api/orders") @RequiredArgsConstructor
+@RestController @RequestMapping("/api/orders") @RequiredArgsConstructor @Slf4j
 public class OrderController {
   private final OrderService orderService;
 
   @PostMapping
   public OrderResponseDTO create(@RequestBody @Valid OrderCreateDTO dto) {
+    log.info("Creating order with discount: {}, shipping: {}", dto.discount(), dto.shipping());
+    
     // Check if cart items are provided directly (from frontend)
     if (dto.cartItems() != null && !dto.cartItems().isEmpty()) {
-      return orderService.createFromCartItemsAsDTO(dto.address(), dto.cartItems(), dto.discount());
+      return orderService.createFromCartItemsAsDTO(dto.address(), dto.cartItems(), dto.discount(), dto.shipping());
     } else {
       // Fallback to database cart approach
-      Order o = orderService.createFromCart(dto.address());
+      Order o = orderService.createFromCart(dto.address(), dto.discount(), dto.shipping());
       return orderService.toDTO(o);
     }
   }

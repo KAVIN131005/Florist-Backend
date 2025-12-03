@@ -2,6 +2,8 @@ package com.example.backend.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.security.Key;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
+  private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
   private final Key key;
   private final long expirationMs;
 
@@ -51,9 +54,26 @@ public class JwtUtil {
 
   public boolean validate(String token) {
     try {
-      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+      log.debug("JWT validation successful for subject: {}, expiration: {}", claims.getSubject(), claims.getExpiration());
       return true;
-    } catch (JwtException | IllegalArgumentException e) {
+    } catch (ExpiredJwtException e) {
+      log.warn("JWT token expired for subject: {}, expiration: {}", e.getClaims().getSubject(), e.getClaims().getExpiration());
+      return false;
+    } catch (UnsupportedJwtException e) {
+      log.warn("JWT token is unsupported: {}", e.getMessage());
+      return false;
+    } catch (MalformedJwtException e) {
+      log.warn("JWT token is malformed: {}", e.getMessage());
+      return false;
+    } catch (SecurityException e) {
+      log.warn("JWT token signature validation failed: {}", e.getMessage());
+      return false;
+    } catch (IllegalArgumentException e) {
+      log.warn("JWT token is invalid (illegal argument): {}", e.getMessage());
+      return false;
+    } catch (Exception e) {
+      log.warn("JWT token validation failed with unexpected error: {}", e.getMessage());
       return false;
     }
   }

@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
+import categoryService from "../../services/categoryService";
 import { ThemeContext } from "../../context/themeContextDefinition";
 
 export default function MyProducts() {
   const { dark } = useContext(ThemeContext);
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -13,6 +15,7 @@ export default function MyProducts() {
   const [viewMode, setViewMode] = useState("grid");
 
   useEffect(() => {
+    // Fetch products
     api
       .get("/products/mine", {
         params: {
@@ -27,6 +30,17 @@ export default function MyProducts() {
       .catch((err) => {
         console.error("Error fetching products:", err.response || err);
         setLoading(false);
+      });
+
+    // Fetch categories
+    categoryService
+      .all()
+      .then((categoriesData) => {
+        setCategories(categoriesData || []);
+      })
+      .catch((err) => {
+        console.error("Error fetching categories:", err.response || err);
+        setCategories([]);
       });
   }, []);
 
@@ -45,8 +59,6 @@ export default function MyProducts() {
         default: return 0;
       }
     });
-
-  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
   if (loading) return (
     <div className={`min-h-screen flex justify-center items-center ${dark ? 'bg-gray-900' : 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50'}`}>
@@ -140,7 +152,9 @@ export default function MyProducts() {
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat.id || cat.name || cat} value={cat.name || cat}>
+                    {cat.name || cat}
+                  </option>
                 ))}
               </select>
               
